@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="Single Dog">
+
+
+
+<meta name="description" content="第5章-消息中间件RabbitMQ学习目标：  能够说出消息队列的应用场景以及RabbitMQ的主要概念 完成RabbitMQ安装以及RabbitMQ三种模式的入门案例 完成用户注册，能够将消息发送给RabbitMQ 完成短信微服务，能够接收消息并调用阿里云通信完成短信发送  1 RabbitMQ简介1.1消息队列中间件简介​    消息队列中间件是分布式系统中重要的组件，主要解决应用耦合，异步消">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2019/04/20/my-work0 (5)/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第5章-消息中间件RabbitMQ学习目标：  能够说出消息队列的应用场景以及RabbitMQ的主要概念 完成RabbitMQ安装以及RabbitMQ三种模式的入门案例 完成用户注册，能够将消息发送给RabbitMQ 完成短信微服务，能够接收消息并调用阿里云通信完成短信发送  1 RabbitMQ简介1.1消息队列中间件简介​    消息队列中间件是分布式系统中重要的组件，主要解决应用耦合，异步消">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5-1.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5-2.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5-10.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5-4.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5-5.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_1.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_2.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_3.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_4.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5-6.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_5.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_6.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_7.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_9.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_8.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_10.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_11.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_14.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_15.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5_13.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5-9.jpg">
+<meta property="og:updated_time" content="2019-03-08T13:04:59.212Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="第5章-消息中间件RabbitMQ学习目标：  能够说出消息队列的应用场景以及RabbitMQ的主要概念 完成RabbitMQ安装以及RabbitMQ三种模式的入门案例 完成用户注册，能够将消息发送给RabbitMQ 完成短信微服务，能够接收消息并调用阿里云通信完成短信发送  1 RabbitMQ简介1.1消息队列中间件简介​    消息队列中间件是分布式系统中重要的组件，主要解决应用耦合，异步消">
+<meta name="twitter:image" content="http://yoursite.com/2019/04/20/my-work0%20(5)/image/5-1.jpg">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>Hexo</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: 
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/1.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Single Dog</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:123@123.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="#" title="GitHub"></a>
+                            
+                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">专注于前端</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Single Dog</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/1.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Single Dog</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:123@123.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="#" title="GitHub"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
+</nav>
+      <div class="body-wrap"><article id="post-my-work0 (5)" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/04/20/my-work0 (5)/" class="article-date">
+      <time datetime="2019-04-20T14:58:54.591Z" itemprop="datePublished">2019-04-20</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h1 id="第5章-消息中间件RabbitMQ"><a href="#第5章-消息中间件RabbitMQ" class="headerlink" title="第5章-消息中间件RabbitMQ"></a>第5章-消息中间件RabbitMQ</h1><p>学习目标：</p>
+<ul>
+<li>能够说出消息队列的应用场景以及RabbitMQ的主要概念</li>
+<li>完成RabbitMQ安装以及RabbitMQ三种模式的入门案例</li>
+<li>完成用户注册，能够将消息发送给RabbitMQ</li>
+<li>完成短信微服务，能够接收消息并调用阿里云通信完成短信发送</li>
+</ul>
+<h1 id="1-RabbitMQ简介"><a href="#1-RabbitMQ简介" class="headerlink" title="1 RabbitMQ简介"></a>1 RabbitMQ简介</h1><h2 id="1-1消息队列中间件简介"><a href="#1-1消息队列中间件简介" class="headerlink" title="1.1消息队列中间件简介"></a>1.1消息队列中间件简介</h2><p>​    消息队列中间件是分布式系统中重要的组件，主要解决应用耦合，异步消息，流量削锋等问题实现高性能，高可用，可伸缩和最终一致性[架构]   使用较多的消息队列有ActiveMQ，RabbitMQ，ZeroMQ，Kafka，MetaMQ，RocketMQ</p>
+<p>以下介绍消息队列在实际应用中常用的使用场景：异步处理，应用解耦，流量削锋和消息通讯四个场景</p>
+<h2 id="1-2什么是RabbitMQ"><a href="#1-2什么是RabbitMQ" class="headerlink" title="1.2什么是RabbitMQ"></a>1.2什么是RabbitMQ</h2><p>RabbitMQ 是一个由 Erlang 语言开发的 AMQP 的开源实现。</p>
+<p>AMQP ：Advanced Message Queue，高级消息队列协议。它是应用层协议的一个开放标准，为面向消息的中间件设计，基于此协议的客户端与消息中间件可传递消息，并不受产品、开发语言等条件的限制。</p>
+<p>RabbitMQ 最初起源于金融系统，用于在分布式系统中存储转发消息，在易用性、扩展性、高可用性等方面表现不俗。具体特点包括：</p>
+<p>1.可靠性（Reliability）</p>
+<p>RabbitMQ 使用一些机制来保证可靠性，如持久化、传输确认、发布确认。</p>
+<p>2.灵活的路由（Flexible Routing）</p>
+<p>在消息进入队列之前，通过 Exchange 来路由消息的。对于典型的路由功能，RabbitMQ 已经提供了一些内置的 Exchange 来实现。针对更复杂的路由功能，可以将多个 Exchange 绑定在一起，也通过插件机制实现自己的 Exchange 。</p>
+<p>3.消息集群（Clustering）</p>
+<p>多个 RabbitMQ 服务器可以组成一个集群，形成一个逻辑 Broker 。</p>
+<p>4.高可用（Highly Available Queues）</p>
+<p>队列可以在集群中的机器上进行镜像，使得在部分节点出问题的情况下队列仍然可用。</p>
+<p>5.多种协议（Multi-protocol）</p>
+<p>RabbitMQ 支持多种消息队列协议，比如 STOMP、MQTT 等等。</p>
+<p>6.多语言客户端（Many Clients）</p>
+<p>RabbitMQ 几乎支持所有常用语言，比如 Java、.NET、Ruby 等等。</p>
+<p>7.管理界面（Management UI）</p>
+<p>RabbitMQ 提供了一个易用的用户界面，使得用户可以监控和管理消息 Broker 的许多方面。</p>
+<p>8.跟踪机制（Tracing）</p>
+<p>如果消息异常，RabbitMQ 提供了消息跟踪机制，使用者可以找出发生了什么。</p>
+<p>9.插件机制（Plugin System）</p>
+<p>RabbitMQ 提供了许多插件，来从多方面进行扩展，也可以编写自己的插件。</p>
+<h2 id="1-3架构图与主要概念"><a href="#1-3架构图与主要概念" class="headerlink" title="1.3架构图与主要概念"></a>1.3架构图与主要概念</h2><h3 id="1-3-1架构图"><a href="#1-3-1架构图" class="headerlink" title="1.3.1架构图"></a>1.3.1架构图</h3><p>Exchange:交换器</p>
+<p>RoutingKey:通俗理解“消息队列名称”</p>
+<p><img src="image\5-1.jpg" alt></p>
+<h3 id="1-3-2主要概念"><a href="#1-3-2主要概念" class="headerlink" title="1.3.2主要概念"></a>1.3.2主要概念</h3><p><strong>RabbitMQ Server：</strong> 也叫broker server，它是一种传输服务。 他的角色就是维护一条从Producer到Consumer的路线，保证数据能够按照指定的方式进行传输。</p>
+<p><strong>Producer：</strong> 消息生产者，如图A、B、C，数据的发送方。消息生产者连接RabbitMQ服务器然后将消息投递到Exchange。</p>
+<p><strong>Consumer：</strong>消息消费者，如图1、2、3，数据的接收方。消息消费者订阅队列，RabbitMQ将Queue中的消息发送到消息消费者。</p>
+<p><strong>Exchange：</strong>生产者将消息发送到Exchange（交换器），由Exchange将消息路由到一个或多个Queue中（或者丢弃）。Exchange并不存储消息。RabbitMQ中的Exchange有direct、fanout、topic、headers四种类型，每种类型对应不同的路由规则。</p>
+<p><strong>Queue：</strong>（队列）是RabbitMQ的内部对象，用于存储消息。消息消费者就是通过订阅队列来获取消息的，RabbitMQ中的消息都只能存储在Queue中，生产者生产消息并最终投递到Queue中，消费者可以从Queue中获取消息并消费。多个消费者可以订阅同一个Queue，这时Queue中的消息会被平均分摊给多个消费者进行处理，而不是每个消费者都收到所有的消息并处理。</p>
+<p><strong>RoutingKey：</strong>生产者在将消息发送给Exchange的时候，一般会指定一个routing key，来指定这个消息的路由规则，而这个routing key需要与Exchange Type及binding key联合使用才能最终生效。在Exchange Type与binding key固定的情况下（在正常使用时一般这些内容都是固定配置好的），我们的生产者就可以在发送消息给Exchange时，通过指定routing key来决定消息流向哪里。RabbitMQ为routing key设定的长度限制为255 bytes。</p>
+<p><strong>Connection： （连接）</strong>：Producer和Consumer都是通过TCP连接到RabbitMQ Server的。以后我们可以看到，程序的起始处就是建立这个TCP连接。</p>
+<p><strong>Channels： （信道）</strong>：它建立在上述的TCP连接中。数据流动都是在Channel中进行的。也就是说，一般情况是程序起始建立TCP连接，第二步就是建立这个Channel。</p>
+<p><strong>VirtualHost：</strong>权限控制的基本单位，一个VirtualHost里面有若干Exchange和MessageQueue，以及指定被哪些user使用</p>
+<h1 id="2-走进RabbitMQ"><a href="#2-走进RabbitMQ" class="headerlink" title="2 走进RabbitMQ"></a>2 走进RabbitMQ</h1><h2 id="2-1-RabbitMQ安装与启动"><a href="#2-1-RabbitMQ安装与启动" class="headerlink" title="2.1 RabbitMQ安装与启动"></a>2.1 RabbitMQ安装与启动</h2><h3 id="2-1-1-windows环境下的安装"><a href="#2-1-1-windows环境下的安装" class="headerlink" title="2.1.1 windows环境下的安装"></a>2.1.1 windows环境下的安装</h3><p>（1）下载并安装<a href="http://http//www.erlang.org/downloads" target="_blank" rel="noopener"> Eralng</a></p>
+<p>配套软件中已提供otp_win64_20.2.exe   （以管理员身份运行安装）</p>
+<p>（2）下载并安装rabbitmq</p>
+<p>配套软件中已提供rabbitmq-server-3.7.4.exe。双击安装，注意不要安装在包含中文和空格的目录下！安装后window服务中就存在rabbitMQ了，并且是启动状态。</p>
+<p>（3）安装管理界面（插件）</p>
+<p>进入rabbitMQ安装目录的sbin目录，输入命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq-plugins enable rabbitmq_management</span><br></pre></td></tr></table></figure>
+<p>（4）重新启动服务</p>
+<p>（5）打开浏览器，地址栏输入<a href="http://127.0.0.1:15672" target="_blank" rel="noopener">http://127.0.0.1:15672</a>  ,即可看到管理界面的登陆页</p>
+<p><img src="image\5-2.jpg" alt></p>
+<p>输入用户名和密码，都为guest  进入主界面：</p>
+<p><img src="image\5-10.jpg" alt></p>
+<p>最上侧的导航以此是：概览、连接、信道、交换器、队列、用户管理 </p>
+<h3 id="2-1-2-docker环境下的安装"><a href="#2-1-2-docker环境下的安装" class="headerlink" title="2.1.2 docker环境下的安装"></a>2.1.2 docker环境下的安装</h3><p>（1）下载镜像：（此步省略）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull rabbitmq:management</span><br></pre></td></tr></table></figure>
+<p>（2）创建容器，rabbitmq需要有映射以下端口:  5671   5672  4369  15671   15672   25672 </p>
+<ul>
+<li>15672 (if management plugin is enabled)</li>
+<li>15671  management监听端口</li>
+</ul>
+<ul>
+<li>5672, 5671 (AMQP 0-9-1 without and with TLS)</li>
+<li>4369 (epmd)   epmd  代表 Erlang 端口映射守护进程</li>
+<li>25672 (Erlang distribution)</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -di --name=tensquare_rabbitmq -p 5671:5671 -p 5672:5672 -p 4369:4369 -p 15671:15671 -p 15672:15672 -p 25672:25672 镜像id</span><br></pre></td></tr></table></figure>
+<p>浏览器访问   <a href="http://192.168.184.134:15672/#/" target="_blank" rel="noopener">http://192.168.184.134:15672/#/</a></p>
+<h2 id="2-2-直接模式（Direct）"><a href="#2-2-直接模式（Direct）" class="headerlink" title="2.2 直接模式（Direct）"></a>2.2 直接模式（Direct）</h2><h3 id="2-2-1-什么是Direct模式"><a href="#2-2-1-什么是Direct模式" class="headerlink" title="2.2.1 什么是Direct模式"></a>2.2.1 什么是Direct模式</h3><p>我们需要将消息发给唯一一个节点时使用这种模式，这是最简单的一种形式。</p>
+<p><img src="image/5-4.jpg" alt> </p>
+<p>任何发送到Direct Exchange的消息都会被转发到RouteKey中指定的Queue。</p>
+<p>1.一般情况可以使用rabbitMQ自带的Exchange：””(该Exchange的名字为空字符串，下文称其为default Exchange)。</p>
+<p>2.这种模式下不需要将Exchange进行任何绑定(binding)操作</p>
+<p>3.消息传递时需要一个“RouteKey”，可以简单的理解为要发送到的队列名字。</p>
+<p>4.如果vhost中不存在RouteKey中指定的队列名，则该消息会被抛弃。</p>
+<h3 id="2-2-2-创建队列"><a href="#2-2-2-创建队列" class="headerlink" title="2.2.2 创建队列"></a>2.2.2 创建队列</h3><p>做下面的例子前，我们先建立一个叫itcast的队列。</p>
+<p><img src="image/5-5.jpg" alt> </p>
+<p>Durability：是否做持久化   Durable（持久）     transient（临时）</p>
+<p>Auto delete : 是否自动删除</p>
+<h3 id="2-2-3-代码实现-消息生产者"><a href="#2-2-3-代码实现-消息生产者" class="headerlink" title="2.2.3 代码实现-消息生产者"></a>2.2.3 代码实现-消息生产者</h3><p>（1）创建工程rabbitmq_demo，引入amqp起步依赖 ，pom.xml如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>2.0.1.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">project.build.sourceEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.build.sourceEncoding</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">project.reporting.outputEncoding</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">project.reporting.outputEncoding</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">java.version</span>&gt;</span>1.8<span class="tag">&lt;/<span class="name">java.version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-amqp<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（2）编写配置文件application.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  rabbitmq:</span></span><br><span class="line"><span class="attr">    host:</span> <span class="number">192.168</span><span class="number">.184</span><span class="number">.134</span></span><br></pre></td></tr></table></figure>
+<p>（3）编写启动类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(Application.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（4）编写测试类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RunWith</span>(SpringRunner.class)</span><br><span class="line"><span class="meta">@SpringBootTest</span>(classes=Application.class)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MqTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> RabbitTemplate rabbitTemplate;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSend</span><span class="params">()</span></span>&#123;</span><br><span class="line">        rabbitTemplate.convertAndSend(<span class="string">"itcast"</span>,<span class="string">"我要红包"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行测试方法</p>
+<h3 id="2-2-4-代码实现-消息消费者"><a href="#2-2-4-代码实现-消息消费者" class="headerlink" title="2.2.4 代码实现-消息消费者"></a>2.2.4 代码实现-消息消费者</h3><p>（1）编写消息消费者类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@RabbitListener</span>(queues=<span class="string">"itcast"</span> )</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Customer1</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RabbitHandler</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showMessage</span><span class="params">(String message)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"itcast接收到消息："</span>+message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（2）运行启动类，可以在控制台看到刚才发送的消息</p>
+<h3 id="2-2-5-测试"><a href="#2-2-5-测试" class="headerlink" title="2.2.5 测试"></a>2.2.5 测试</h3><p>开启多个消费者工程，测试运行消息生产者工程，会发现只有一个消费者工程可以接收到消息。</p>
+<p>如何在IDEA中多次启动同一个程序呢？</p>
+<p>（1）选择IDEA右上角的类名称按钮</p>
+<p><img src="image/5_1.png" alt></p>
+<p>（2）选择Edit Configurations </p>
+<p><img src="image/5_2.png" alt></p>
+<p>（3）在弹出窗口中取消单例模式  ，点击OK</p>
+<p><img src="image/5_3.png" alt></p>
+<p>（4）每次运行前修改application.yml，指定不同的端口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">server:</span><br><span class="line">  port: 9202</span><br></pre></td></tr></table></figure>
+<p>运行后在控制台可以看到多个窗口</p>
+<p><img src="image/5_4.png" alt></p>
+<h2 id="2-3-分列模式（Fanout）"><a href="#2-3-分列模式（Fanout）" class="headerlink" title="2.3 分列模式（Fanout）"></a>2.3 分列模式（Fanout）</h2><h3 id="2-3-1-什么是分列（Fanout）模式"><a href="#2-3-1-什么是分列（Fanout）模式" class="headerlink" title="2.3.1 什么是分列（Fanout）模式"></a>2.3.1 什么是分列（Fanout）模式</h3><p>当我们需要将消息一次发给多个队列时，需要使用这种模式。如下图：</p>
+<p><img src="image\5-6.jpg" alt> </p>
+<p>任何发送到Fanout Exchange的消息都会被转发到与该Exchange绑定(Binding)的所有Queue上。</p>
+<p>1.可以理解为路由表的模式</p>
+<p>2.这种模式不需要RouteKey</p>
+<p>3.这种模式需要提前将Exchange与Queue进行绑定，一个Exchange可以绑定多个Queue，一个Queue可以同多个Exchange进行绑定。</p>
+<p>4.如果接受到消息的Exchange没有与任何Queue绑定，则消息会被抛弃。</p>
+<h3 id="2-3-2-交换器绑定队列"><a href="#2-3-2-交换器绑定队列" class="headerlink" title="2.3.2 交换器绑定队列"></a>2.3.2 交换器绑定队列</h3><p>（1）在queue中添加队列itheima 和kudingyu</p>
+<p>（2）新建交换器chuanzhi</p>
+<p><img src="image/5_5.png" alt></p>
+<p>（3）将kudingyu和itheima两个队列绑定到交换器chuanzhi</p>
+<p><img src="image/5_6.png" alt></p>
+<p>点击chuanzhi进入交换器管理界面</p>
+<p><img src="image/5_7.png" alt></p>
+<p>   点击Bindings添加绑定  itheima和kudingyu</p>
+<p><img src="image/5_9.png" alt> 绑定后效果如下：</p>
+<p><img src="image/5_8.png" alt></p>
+<h3 id="2-3-3-代码实现-消息生产者"><a href="#2-3-3-代码实现-消息生产者" class="headerlink" title="2.3.3 代码实现-消息生产者"></a>2.3.3 代码实现-消息生产者</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSendFanout</span><span class="params">()</span></span>&#123;</span><br><span class="line">	rabbitTemplate.convertAndSend(<span class="string">"chuanzhi"</span>,<span class="string">""</span>, <span class="string">"分列模式走起"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-3-4-代码实现-消息消费者"><a href="#2-3-4-代码实现-消息消费者" class="headerlink" title="2.3.4 代码实现-消息消费者"></a>2.3.4 代码实现-消息消费者</h3><p>创建消息监听类，用于监听itheima的消息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@RabbitListener</span>(queues=<span class="string">"itheima"</span> )</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Customer2</span> </span>&#123;</span><br><span class="line">    <span class="meta">@RabbitHandler</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showMessage</span><span class="params">(String message)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"itheima接收到消息："</span>+message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>创建消息监听类，用于监听kudingyu的消息</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@RabbitListener</span>(queues=<span class="string">"kudingyu"</span> )</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Customer3</span> </span>&#123;</span><br><span class="line">    <span class="meta">@RabbitHandler</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">showMessage</span><span class="params">(String message)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"kudingyu接收到消息："</span>+message);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-3-5-测试"><a href="#2-3-5-测试" class="headerlink" title="2.3.5 测试"></a>2.3.5 测试</h3><p>启动消费者工程，发送消息测试</p>
+<p><img src="image/5_10.png" alt></p>
+<h2 id="2-4-主题模式（Topic）"><a href="#2-4-主题模式（Topic）" class="headerlink" title="2.4 主题模式（Topic）"></a>2.4 主题模式（Topic）</h2><h3 id="2-4-1-什么是主题模式"><a href="#2-4-1-什么是主题模式" class="headerlink" title="2.4.1 什么是主题模式"></a>2.4.1 什么是主题模式</h3><p>任何发送到Topic Exchange的消息都会被转发到所有关心RouteKey中指定话题的Queue上</p>
+<p><img src="image/5_11.png" alt></p>
+<p>如上图所示<br>此类交换器使得来自不同的源头的消息可以到达一个对列，其实说的更明白一点就是模糊匹配的意思，例如：上图中红色对列的routekey为usa.#，#代表匹配任意字符，但是要想消息能到达此对列，usa.必须匹配后面的#好可以随意。图中usa.news usa.weather,都能找到红色队列，符号<code>#</code>匹配一个或多个词，符号<code>*</code>匹配不多不少一个词。因此<code>usa.#</code>能够匹配到<code>usa.news.XXX</code>，但是<code>usa.*</code>只会匹配到<code>usa.XXX</code>。<br>注：<br>交换器说到底是一个名称与队列绑定的列表。当消息发布到交换器时，实际上是由你所连接的信道，将消息路由键同交换器上绑定的列表进行比较，最后路由消息。</p>
+<p><strong>任何发送到Topic Exchange的消息都会被转发到所有关心RouteKey中指定话题的Queue上</strong></p>
+<p>1.这种模式较为复杂，简单来说，就是每个队列都有其关心的主题，所有的消息都带有一个“标题”(RouteKey)，Exchange会将消息转发到所有关注主题能与RouteKey模糊匹配的队列。</p>
+<p>2.这种模式需要RouteKey，也许要提前绑定Exchange与Queue。</p>
+<p>3.在进行绑定时，要提供一个该队列关心的主题，如“#.log.#”表示该队列关心所有涉及log的消息(一个RouteKey为”MQ.log.error”的消息会被转发到该队列)。</p>
+<p>4.“#”表示0个或若干个关键字，“<em>”表示一个关键字。如“log.</em>”能与“log.warn”匹配，无法与“log.warn.timeout”匹配；但是“log.#”能与上述两者匹配。</p>
+<p>5.同样，如果Exchange没有发现能够与RouteKey匹配的Queue，则会抛弃此消息</p>
+<h3 id="2-4-2-创建队列与绑定"><a href="#2-4-2-创建队列与绑定" class="headerlink" title="2.4.2 创建队列与绑定"></a>2.4.2 创建队列与绑定</h3><p>（1）新建一个交换器   ，类型选择topic</p>
+<p><img src="image/5_14.png" alt></p>
+<p>（2）点击新建的交换器topictest </p>
+<p><img src="image/5_15.png" alt></p>
+<p>添加匹配规则，添加后列表如下：</p>
+<p><img src="image/5_13.png" alt></p>
+<h3 id="2-4-3-代码实现"><a href="#2-4-3-代码实现" class="headerlink" title="2.4.3 代码实现"></a>2.4.3 代码实现</h3><p>编写测试类方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSendTopic1</span><span class="params">()</span></span>&#123;</span><br><span class="line">    rabbitTemplate.convertAndSend(<span class="string">"topictest"</span>,<span class="string">"goods.aaa"</span>,<span class="string">"主题模式"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：itcast接收到消息：主题模式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSendTopic2</span><span class="params">()</span></span>&#123;</span><br><span class="line">    rabbitTemplate.convertAndSend(<span class="string">"topictest"</span>,<span class="string">"article.content.log"</span>,<span class="string">"主题模式"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：itheima接收到消息：主题模式</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSendTopic3</span><span class="params">()</span></span>&#123;</span><br><span class="line">    rabbitTemplate.convertAndSend(<span class="string">"topictest"</span>,<span class="string">"goods.log"</span>,<span class="string">"主题模式"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出结果：</p>
+<p>itheima接收到消息：主题模式<br>itcast接收到消息：主题模式<br>kudingyu接收到消息：主题模式</p>
+<h1 id="3-用户微服务-用户注册"><a href="#3-用户微服务-用户注册" class="headerlink" title="3 用户微服务-用户注册"></a>3 用户微服务-用户注册</h1><h2 id="3-1-需求分析"><a href="#3-1-需求分析" class="headerlink" title="3.1 需求分析"></a>3.1 需求分析</h2><p>注册账号，用手机号注册，填写后发送短信验证码，填写短信验证码正确方可注册成功。</p>
+<p><img src="image/5-9.jpg" alt> </p>
+<p>我们这里所做的实际上就是消息生产者。</p>
+<h2 id="3-2-代码生成"><a href="#3-2-代码生成" class="headerlink" title="3.2 代码生成"></a>3.2 代码生成</h2><p>（1）使用代码生成器生成用户微服务代码 tensquare_user</p>
+<p>（2）拷贝到当前工程，并在父工程引入。</p>
+<p>（3）修改Application类名称为UserApplication</p>
+<p>（4）修改application.yml 中的端口为9008  ,url 为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jdbc:mysql://192.168.184.134:3306/tensquare_user?characterEncoding=UTF8</span><br></pre></td></tr></table></figure>
+<p>（5）进行浏览器测试</p>
+<h2 id="3-3-发送短信验证码"><a href="#3-3-发送短信验证码" class="headerlink" title="3.3 发送短信验证码"></a>3.3 发送短信验证码</h2><p>实现思路： 在用户微服务编写API ,生成手机验证码，存入Redis并发送到RabbitMQ</p>
+<h3 id="3-3-1-准备工作"><a href="#3-3-1-准备工作" class="headerlink" title="3.3.1 准备工作"></a>3.3.1 准备工作</h3><p>（1）因为要用到缓存和消息队列，所以在用户微服务（tensquare_user）引入依赖redis和amqp的起步依赖。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-redis<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-amqp<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（2）修改application.yml ,在spring 节点下添加配置</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">redis:</span></span><br><span class="line"><span class="attr">  host:</span> <span class="number">192.168</span><span class="number">.184</span><span class="number">.134</span></span><br><span class="line"><span class="attr">rabbitmq:</span></span><br><span class="line"><span class="attr">  host:</span> <span class="number">192.168</span><span class="number">.184</span><span class="number">.134</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-3-2-代码实现"><a href="#3-3-2-代码实现" class="headerlink" title="3.3.2 代码实现"></a>3.3.2 代码实现</h3><p>（1）在UserService中新增方法，用于发送短信验证码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> RedisTemplate redisTemplate;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Autowired</span></span><br><span class="line"><span class="keyword">private</span> RabbitTemplate rabbitTemplate;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 发送短信验证码</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> mobile 手机号</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendSms</span><span class="params">(String mobile)</span></span>&#123;</span><br><span class="line">	<span class="comment">//1.生成6位短信验证码</span></span><br><span class="line">	Random random=<span class="keyword">new</span> Random();</span><br><span class="line">	<span class="keyword">int</span> max=<span class="number">999999</span>;<span class="comment">//最大数</span></span><br><span class="line">	<span class="keyword">int</span> min=<span class="number">100000</span>;<span class="comment">//最小数</span></span><br><span class="line">	<span class="keyword">int</span> code = random.nextInt(max);<span class="comment">//随机生成</span></span><br><span class="line">	<span class="keyword">if</span>(code&lt;min)&#123;</span><br><span class="line">		code=code+min;</span><br><span class="line">	&#125;</span><br><span class="line">	System.out.println(mobile+<span class="string">"收到验证码是："</span>+code);</span><br><span class="line">	<span class="comment">//2.将验证码放入redis</span></span><br><span class="line">	redisTemplate.opsForValue().set(<span class="string">"smscode_"</span>+mobile, code+<span class="string">""</span> ,<span class="number">5</span>, TimeUnit.MINUTES );<span class="comment">//五分钟过期</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//3.将验证码和手机号发动到rabbitMQ中</span></span><br><span class="line">	Map&lt;String,String&gt; map=<span class="keyword">new</span> HashMap();</span><br><span class="line">	map.put(<span class="string">"mobile"</span>,mobile);</span><br><span class="line">	map.put(<span class="string">"code"</span>,code+<span class="string">""</span>);</span><br><span class="line">	rabbitTemplate.convertAndSend(<span class="string">"sms"</span>,map);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（2）UserController新增方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 发送短信验证码</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> mobile</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(value=<span class="string">"/sendsms/&#123;mobile&#125;"</span>,method=RequestMethod.POST)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Result <span class="title">sendsms</span><span class="params">(@PathVariable String mobile )</span></span>&#123;</span><br><span class="line">	userService.sendSms(mobile);</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> Result(<span class="keyword">true</span>,StatusCode.OK,<span class="string">"发送成功"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（3）启动微服务，在rabbitMQ中创建名为sms的队列，测试API </p>
+<h2 id="3-3-用户注册"><a href="#3-3-用户注册" class="headerlink" title="3.3 用户注册"></a>3.3 用户注册</h2><p>（1）UserService增加方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 增加</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> user 用户</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> code 用户填写的验证码</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">add</span><span class="params">(User user,String code)</span> </span>&#123;</span><br><span class="line">	<span class="comment">//判断验证码是否正确</span></span><br><span class="line">	String syscode = (String)redisTemplate.opsForValue().get(<span class="string">"smscode_"</span> + user.getMobile()); <span class="comment">//提取系统正确的验证码</span></span><br><span class="line">	<span class="keyword">if</span>(syscode==<span class="keyword">null</span>)&#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"请点击获取短信验证码"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span>(!syscode.equals(code))&#123;</span><br><span class="line">		<span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"验证码输入不正确"</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	user.setId( idWorker.nextId()+<span class="string">""</span> );</span><br><span class="line">	user.setFollowcount(<span class="number">0</span>);<span class="comment">//关注数</span></span><br><span class="line">	user.setFanscount(<span class="number">0</span>);<span class="comment">//粉丝数</span></span><br><span class="line">	user.setOnline(<span class="number">0L</span>);<span class="comment">//在线时长</span></span><br><span class="line">	user.setRegdate(<span class="keyword">new</span> Date());<span class="comment">//注册日期</span></span><br><span class="line">	user.setUpdatedate(<span class="keyword">new</span> Date());<span class="comment">//更新日期</span></span><br><span class="line">	user.setLastdate(<span class="keyword">new</span> Date());<span class="comment">//最后登陆日期</span></span><br><span class="line"></span><br><span class="line">	userDao.save(user);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（2）UserController增加方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 用户注册</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> user</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(value=<span class="string">"/register/&#123;code&#125;"</span>,method=RequestMethod.POST)</span><br><span class="line"><span class="function"><span class="keyword">public</span> Result <span class="title">register</span><span class="params">( @RequestBody User user  ,@PathVariable String code)</span></span>&#123;</span><br><span class="line">	userService.add(user,code);</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> Result(<span class="keyword">true</span>,StatusCode.OK,<span class="string">"注册成功"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（3）测试</p>
+<h1 id="4-短信微服务"><a href="#4-短信微服务" class="headerlink" title="4 短信微服务"></a>4 短信微服务</h1><h2 id="4-1-需求分析"><a href="#4-1-需求分析" class="headerlink" title="4.1 需求分析"></a>4.1 需求分析</h2><p>​    开发短信发送微服务，从rabbitMQ中提取消息，调用阿里大于短信接口实现短信发送 。（关于短信阿里大于，我们在前面的电商项目中已经讲解过，故账号申请等环节略过）</p>
+<pre><code>我们这里实际做的就是消息的消费者.
+</code></pre><h2 id="4-2-提取队列中的消息"><a href="#4-2-提取队列中的消息" class="headerlink" title="4.2 提取队列中的消息"></a>4.2 提取队列中的消息</h2><h3 id="4-2-1-工程搭建"><a href="#4-2-1-工程搭建" class="headerlink" title="4.2.1 工程搭建"></a>4.2.1 工程搭建</h3><p>（1）创建工程模块：tensquare_sms，pom.xml引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> 	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span>  </span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-amqp<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（2）创建application.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span> </span><br><span class="line"><span class="attr">  port:</span> <span class="number">9009</span></span><br><span class="line"><span class="attr">spring:</span> </span><br><span class="line"><span class="attr">  application:</span>  </span><br><span class="line"><span class="attr">    name:</span> <span class="string">tensquare-sms</span> <span class="comment">#指定服务名</span></span><br><span class="line"><span class="attr">  rabbitmq:</span> </span><br><span class="line"><span class="attr">    host:</span> <span class="number">192.168</span><span class="number">.184</span><span class="number">.134</span></span><br></pre></td></tr></table></figure>
+<p>（3）com.tensquare.sms 包下创建启动类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SmsApplication</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		SpringApplication.run(SmsApplication.class, args);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="4-2-2-消息监听类"><a href="#4-2-2-消息监听类" class="headerlink" title="4.2.2 消息监听类"></a>4.2.2 消息监听类</h3><p>（1）创建短信监听类，获取手机号和验证码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 短信监听类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@RabbitListener</span>(queues = <span class="string">"sms"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SmsListener</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     *  发送短信</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> message</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@RabbitHandler</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendSms</span><span class="params">(Map&lt;String,String&gt; message)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"手机号："</span>+message.get(<span class="string">"mobile"</span>));</span><br><span class="line">        System.out.println(<span class="string">"验证码："</span>+message.get(<span class="string">"code"</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（2）运行SmsApplication类，控制台显示手机号和验证码</p>
+<h2 id="4-3-发送短信-阿里云通信"><a href="#4-3-发送短信-阿里云通信" class="headerlink" title="4.3 发送短信(阿里云通信)"></a>4.3 发送短信(阿里云通信)</h2><h3 id="4-3-1-阿里云通信简介"><a href="#4-3-1-阿里云通信简介" class="headerlink" title="4.3.1 阿里云通信简介"></a>4.3.1 阿里云通信简介</h3><p>​        阿里云通信（原名–阿里大于）是 阿里云旗下产品，融合了三大运营商的通信能力，通过将传统通信业务和能力与互联网相结合，创新融合阿里巴巴生态内容，全力为中小企业和开发者提供优质服务阿里大于提供包括短信、语音、流量直充、私密专线、店铺手机号等个性化服务。通过阿里大于打通三大运营商通信能力，全面融合阿里巴巴生态，以开放 API 及 SDK 的方式向开发者提供通信和数据服务，更好地支撑企业业务发展和创新服务。</p>
+<h3 id="4-3-2-准备工作"><a href="#4-3-2-准备工作" class="headerlink" title="4.3.2 准备工作"></a>4.3.2 准备工作</h3><p>（1）在阿里云官网  <a href="http://www.alidayu.com" target="_blank" rel="noopener">www.alidayu.com</a> 注册账号</p>
+<p>（2）手机下载”阿里云“APP，完成实名认证</p>
+<p>（3）登陆阿里云，产品中选择”短信服务“</p>
+<p>（4）申请签名</p>
+<p>（5）申请模板</p>
+<p>（6）创建 accessKey （注意保密！）</p>
+<p>（7）充值  （没必要充太多，1至2元足矣，土豪请随意~）</p>
+<h3 id="4-3-3-代码编写"><a href="#4-3-3-代码编写" class="headerlink" title="4.3.3 代码编写"></a>4.3.3 代码编写</h3><p>（1）创建工程模块tensquare_sms，pom.xml引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.aliyun<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>aliyun-java-sdk-dysmsapi<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  		<span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">  	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">  	<span class="tag">&lt;<span class="name">dependency</span>&gt;</span> </span><br><span class="line">  		<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.aliyun<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  		<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>aliyun-java-sdk-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  		<span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.5<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">  	<span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（2）修改application.yml ，增加配置</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">aliyun:</span> </span><br><span class="line"><span class="attr">  sms:</span> </span><br><span class="line"><span class="attr">    accessKeyId:</span> <span class="string">LTAIKwFq9lPHwLvh</span></span><br><span class="line"><span class="attr">    accessKeySecret:</span> <span class="string">不告诉你</span></span><br><span class="line"><span class="attr">    template_code:</span> <span class="string">SMS_149385475</span></span><br><span class="line"><span class="attr">    sign_name:</span> <span class="string">传智播客</span></span><br></pre></td></tr></table></figure>
+<p>（3）创建短信工具类SmsUtil  （资源已提供，直接拷贝即可）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.tensquare.sms;</span><br><span class="line"><span class="keyword">import</span> com.aliyuncs.DefaultAcsClient;</span><br><span class="line"><span class="keyword">import</span> com.aliyuncs.IAcsClient;</span><br><span class="line"><span class="keyword">import</span> com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsRequest;</span><br><span class="line"><span class="keyword">import</span> com.aliyuncs.dysmsapi.model.v20170525.QuerySendDetailsResponse;</span><br><span class="line"><span class="keyword">import</span> com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest;</span><br><span class="line"><span class="keyword">import</span> com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;</span><br><span class="line"><span class="keyword">import</span> com.aliyuncs.exceptions.ClientException;</span><br><span class="line"><span class="keyword">import</span> com.aliyuncs.profile.DefaultProfile;</span><br><span class="line"><span class="keyword">import</span> com.aliyuncs.profile.IClientProfile;</span><br><span class="line"><span class="keyword">import</span> java.text.SimpleDateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.core.env.Environment;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Component;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 短信工具类</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> Administrator</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SmsUtil</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//产品名称:云通信短信API产品,开发者无需替换</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String product = <span class="string">"Dysmsapi"</span>;</span><br><span class="line">    <span class="comment">//产品域名,开发者无需替换</span></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">final</span> String domain = <span class="string">"dysmsapi.aliyuncs.com"</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Environment env;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// TODO 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 发送短信</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> mobile 手机号</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> template_code 模板号</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> sign_name 签名</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> param 参数</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     * <span class="doctag">@throws</span> ClientException</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> SendSmsResponse <span class="title">sendSms</span><span class="params">(String mobile,String template_code,String sign_name,String param)</span> <span class="keyword">throws</span> ClientException </span>&#123;</span><br><span class="line">    	String accessKeyId =env.getProperty(<span class="string">"aliyun.sms.accessKeyId"</span>);</span><br><span class="line">    String accessKeySecret = env.getProperty(<span class="string">"aliyun.sms.accessKeySecret"</span>);</span><br><span class="line">        <span class="comment">//可自助调整超时时间</span></span><br><span class="line">        System.setProperty(<span class="string">"sun.net.client.defaultConnectTimeout"</span>, <span class="string">"10000"</span>);</span><br><span class="line">        System.setProperty(<span class="string">"sun.net.client.defaultReadTimeout"</span>, <span class="string">"10000"</span>);</span><br><span class="line">        <span class="comment">//初始化acsClient,暂不支持region化</span></span><br><span class="line">        IClientProfile profile = DefaultProfile.getProfile(<span class="string">"cn-hangzhou"</span>, accessKeyId, accessKeySecret);</span><br><span class="line">        DefaultProfile.addEndpoint(<span class="string">"cn-hangzhou"</span>, <span class="string">"cn-hangzhou"</span>, product, domain);</span><br><span class="line">        IAcsClient acsClient = <span class="keyword">new</span> DefaultAcsClient(profile);</span><br><span class="line">        <span class="comment">//组装请求对象-具体描述见控制台-文档部分内容</span></span><br><span class="line">        SendSmsRequest request = <span class="keyword">new</span> SendSmsRequest();</span><br><span class="line">        <span class="comment">//必填:待发送手机号</span></span><br><span class="line">        request.setPhoneNumbers(mobile);</span><br><span class="line">        <span class="comment">//必填:短信签名-可在短信控制台中找到</span></span><br><span class="line">        request.setSignName(sign_name);</span><br><span class="line">        <span class="comment">//必填:短信模板-可在短信控制台中找到</span></span><br><span class="line">        request.setTemplateCode(template_code);</span><br><span class="line">        <span class="comment">//可选:模板中的变量替换JSON串,如模板内容为"亲爱的$&#123;name&#125;,您的验证码为$&#123;code&#125;"时,此处的值为</span></span><br><span class="line">        request.setTemplateParam(param);</span><br><span class="line">        <span class="comment">//选填-上行短信扩展码(无特殊需求用户请忽略此字段)</span></span><br><span class="line">        <span class="comment">//request.setSmsUpExtendCode("90997");</span></span><br><span class="line">        <span class="comment">//可选:outId为提供给业务方扩展字段,最终在短信回执消息中将此值带回给调用者</span></span><br><span class="line">        request.setOutId(<span class="string">"yourOutId"</span>);</span><br><span class="line">        <span class="comment">//hint 此处可能会抛出异常，注意catch</span></span><br><span class="line">        SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);</span><br><span class="line">        <span class="keyword">return</span> sendSmsResponse;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span>  QuerySendDetailsResponse <span class="title">querySendDetails</span><span class="params">(String mobile,String bizId)</span> <span class="keyword">throws</span> ClientException </span>&#123;</span><br><span class="line">    	String accessKeyId =env.getProperty(<span class="string">"accessKeyId"</span>);</span><br><span class="line">        String accessKeySecret = env.getProperty(<span class="string">"accessKeySecret"</span>);</span><br><span class="line">        <span class="comment">//可自助调整超时时间</span></span><br><span class="line">        System.setProperty(<span class="string">"sun.net.client.defaultConnectTimeout"</span>, <span class="string">"10000"</span>);</span><br><span class="line">        System.setProperty(<span class="string">"sun.net.client.defaultReadTimeout"</span>, <span class="string">"10000"</span>);</span><br><span class="line">        <span class="comment">//初始化acsClient,暂不支持region化</span></span><br><span class="line">        IClientProfile profile = DefaultProfile.getProfile(<span class="string">"cn-hangzhou"</span>, accessKeyId, accessKeySecret);</span><br><span class="line">        DefaultProfile.addEndpoint(<span class="string">"cn-hangzhou"</span>, <span class="string">"cn-hangzhou"</span>, product, domain);</span><br><span class="line">        IAcsClient acsClient = <span class="keyword">new</span> DefaultAcsClient(profile);</span><br><span class="line">        <span class="comment">//组装请求对象</span></span><br><span class="line">        QuerySendDetailsRequest request = <span class="keyword">new</span> QuerySendDetailsRequest();</span><br><span class="line">        <span class="comment">//必填-号码</span></span><br><span class="line">        request.setPhoneNumber(mobile);</span><br><span class="line">        <span class="comment">//可选-流水号</span></span><br><span class="line">        request.setBizId(bizId);</span><br><span class="line">        <span class="comment">//必填-发送日期 支持30天内记录查询，格式yyyyMMdd</span></span><br><span class="line">        SimpleDateFormat ft = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyyMMdd"</span>);</span><br><span class="line">        request.setSendDate(ft.format(<span class="keyword">new</span> Date()));</span><br><span class="line">        <span class="comment">//必填-页大小</span></span><br><span class="line">        request.setPageSize(<span class="number">10L</span>);</span><br><span class="line">        <span class="comment">//必填-当前页码从1开始计数</span></span><br><span class="line">        request.setCurrentPage(<span class="number">1L</span>);</span><br><span class="line">        <span class="comment">//hint 此处可能会抛出异常，注意catch</span></span><br><span class="line">        QuerySendDetailsResponse querySendDetailsResponse = acsClient.getAcsResponse(request);</span><br><span class="line">        <span class="keyword">return</span> querySendDetailsResponse;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（4）修改消息监听类，完成短信发送</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 短信监听类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="meta">@RabbitListener</span>(queues = <span class="string">"sms"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SmsListener</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span>  SmsUtil smsUtil;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;aliyun.sms.template_code&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> String templateCode;<span class="comment">//模板编号</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;aliyun.sms.sign_name&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> String signName;<span class="comment">//签名</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@RabbitHandler</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendSms</span><span class="params">(Map&lt;String,String&gt; map)</span></span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"手机号："</span>+map.get(<span class="string">"mobile"</span>));</span><br><span class="line">        System.out.println(<span class="string">"验证码："</span>+map.get(<span class="string">"code"</span>));</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            smsUtil.sendSms(map.get(<span class="string">"mobile"</span>),templateCode,signName,<span class="string">"&#123;\"code\":"</span>+ map.get(<span class="string">"code"</span>) +<span class="string">"&#125;"</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ClientException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="面试问题总结"><a href="#面试问题总结" class="headerlink" title="面试问题总结"></a>面试问题总结</h1><h2 id="项目中哪部分业务用到消息队列"><a href="#项目中哪部分业务用到消息队列" class="headerlink" title="项目中哪部分业务用到消息队列"></a>项目中哪部分业务用到消息队列</h2><p>用户注册发送短信验证码</p>
+<h2 id="项目中使用哪种消息队列？"><a href="#项目中使用哪种消息队列？" class="headerlink" title="项目中使用哪种消息队列？"></a>项目中使用哪种消息队列？</h2><p>rabbitMQ</p>
+<h2 id="RabbitMQ-有哪几种发送模式"><a href="#RabbitMQ-有哪几种发送模式" class="headerlink" title="RabbitMQ 有哪几种发送模式"></a>RabbitMQ 有哪几种发送模式</h2><p>直接模式  分列模式  主题模式  headers</p>
+<h2 id="项目中如何发送短信"><a href="#项目中如何发送短信" class="headerlink" title="项目中如何发送短信"></a>项目中如何发送短信</h2><p>阿里云通信（阿里大于）</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2019/04/20/my-work0 (5)/"></a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Single Dog</a></p>
+        <p><span>发布时间:</span>2019-04-20, 22:58:54</p>
+        <p><span>最后更新:</span>2019-03-08, 21:04:59</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2019/04/20/my-work0 (5)/" title>http://yoursite.com/2019/04/20/my-work0 (5)/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/04/20/my-work0 (5)/　　作者: Single Dog" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2019/04/20/my-work0 (6)/">
+                    
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2019/04/20/my-work0 (4)/">
+                    
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#第5章-消息中间件RabbitMQ"><span class="toc-number">1.</span> <span class="toc-text">第5章-消息中间件RabbitMQ</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-RabbitMQ简介"><span class="toc-number">2.</span> <span class="toc-text">1 RabbitMQ简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1消息队列中间件简介"><span class="toc-number">2.1.</span> <span class="toc-text">1.1消息队列中间件简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2什么是RabbitMQ"><span class="toc-number">2.2.</span> <span class="toc-text">1.2什么是RabbitMQ</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3架构图与主要概念"><span class="toc-number">2.3.</span> <span class="toc-text">1.3架构图与主要概念</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-1架构图"><span class="toc-number">2.3.1.</span> <span class="toc-text">1.3.1架构图</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-2主要概念"><span class="toc-number">2.3.2.</span> <span class="toc-text">1.3.2主要概念</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-走进RabbitMQ"><span class="toc-number">3.</span> <span class="toc-text">2 走进RabbitMQ</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-RabbitMQ安装与启动"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 RabbitMQ安装与启动</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-1-windows环境下的安装"><span class="toc-number">3.1.1.</span> <span class="toc-text">2.1.1 windows环境下的安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-2-docker环境下的安装"><span class="toc-number">3.1.2.</span> <span class="toc-text">2.1.2 docker环境下的安装</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-直接模式（Direct）"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 直接模式（Direct）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-1-什么是Direct模式"><span class="toc-number">3.2.1.</span> <span class="toc-text">2.2.1 什么是Direct模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-2-创建队列"><span class="toc-number">3.2.2.</span> <span class="toc-text">2.2.2 创建队列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-3-代码实现-消息生产者"><span class="toc-number">3.2.3.</span> <span class="toc-text">2.2.3 代码实现-消息生产者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-4-代码实现-消息消费者"><span class="toc-number">3.2.4.</span> <span class="toc-text">2.2.4 代码实现-消息消费者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-5-测试"><span class="toc-number">3.2.5.</span> <span class="toc-text">2.2.5 测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-分列模式（Fanout）"><span class="toc-number">3.3.</span> <span class="toc-text">2.3 分列模式（Fanout）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-1-什么是分列（Fanout）模式"><span class="toc-number">3.3.1.</span> <span class="toc-text">2.3.1 什么是分列（Fanout）模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-2-交换器绑定队列"><span class="toc-number">3.3.2.</span> <span class="toc-text">2.3.2 交换器绑定队列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-3-代码实现-消息生产者"><span class="toc-number">3.3.3.</span> <span class="toc-text">2.3.3 代码实现-消息生产者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-4-代码实现-消息消费者"><span class="toc-number">3.3.4.</span> <span class="toc-text">2.3.4 代码实现-消息消费者</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-5-测试"><span class="toc-number">3.3.5.</span> <span class="toc-text">2.3.5 测试</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-主题模式（Topic）"><span class="toc-number">3.4.</span> <span class="toc-text">2.4 主题模式（Topic）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-1-什么是主题模式"><span class="toc-number">3.4.1.</span> <span class="toc-text">2.4.1 什么是主题模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-2-创建队列与绑定"><span class="toc-number">3.4.2.</span> <span class="toc-text">2.4.2 创建队列与绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-3-代码实现"><span class="toc-number">3.4.3.</span> <span class="toc-text">2.4.3 代码实现</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-用户微服务-用户注册"><span class="toc-number">4.</span> <span class="toc-text">3 用户微服务-用户注册</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-需求分析"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 需求分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-代码生成"><span class="toc-number">4.2.</span> <span class="toc-text">3.2 代码生成</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-发送短信验证码"><span class="toc-number">4.3.</span> <span class="toc-text">3.3 发送短信验证码</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-1-准备工作"><span class="toc-number">4.3.1.</span> <span class="toc-text">3.3.1 准备工作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-2-代码实现"><span class="toc-number">4.3.2.</span> <span class="toc-text">3.3.2 代码实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-用户注册"><span class="toc-number">4.4.</span> <span class="toc-text">3.3 用户注册</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-短信微服务"><span class="toc-number">5.</span> <span class="toc-text">4 短信微服务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-需求分析"><span class="toc-number">5.1.</span> <span class="toc-text">4.1 需求分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-提取队列中的消息"><span class="toc-number">5.2.</span> <span class="toc-text">4.2 提取队列中的消息</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-1-工程搭建"><span class="toc-number">5.2.1.</span> <span class="toc-text">4.2.1 工程搭建</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-2-消息监听类"><span class="toc-number">5.2.2.</span> <span class="toc-text">4.2.2 消息监听类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3-发送短信-阿里云通信"><span class="toc-number">5.3.</span> <span class="toc-text">4.3 发送短信(阿里云通信)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-1-阿里云通信简介"><span class="toc-number">5.3.1.</span> <span class="toc-text">4.3.1 阿里云通信简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-2-准备工作"><span class="toc-number">5.3.2.</span> <span class="toc-text">4.3.2 准备工作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-3-代码编写"><span class="toc-number">5.3.3.</span> <span class="toc-text">4.3.3 代码编写</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#面试问题总结"><span class="toc-number">6.</span> <span class="toc-text">面试问题总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#项目中哪部分业务用到消息队列"><span class="toc-number">6.1.</span> <span class="toc-text">项目中哪部分业务用到消息队列</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目中使用哪种消息队列？"><span class="toc-number">6.2.</span> <span class="toc-text">项目中使用哪种消息队列？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#RabbitMQ-有哪几种发送模式"><span class="toc-number">6.3.</span> <span class="toc-text">RabbitMQ 有哪几种发送模式</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目中如何发送短信"><span class="toc-number">6.4.</span> <span class="toc-text">项目中如何发送短信</span></a></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"　| Hexo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2019/04/20/my-work0 (6)/" title="上一篇: ">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2019/04/20/my-work0 (4)/" title="下一篇: ">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (10)/">my-work0 (10)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (9)/">my-work0 (9)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (8)/">my-work0 (8)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (7)/">my-work0 (7)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (6)/">my-work0 (6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (5)/">my-work0 (5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (4)/">my-work0 (4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (3)/">my-work0 (3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (2)/">my-work0 (2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/hello-world/">hello-world</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2016-2019 Single Dog
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style="display:none">
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style="display:none">
+                        <span id="page-visit" title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="Single Dog">
+
+
+
+<meta name="description" content="第8章-SpringCloud之一统天下学习目标： 1 熔断器Hystrix1.1 为什么要使用熔断器​    在微服务架构中通常会有多个服务层调用，基础服务的故障可能会导致级联故障，进而造成整个系统不可用的情况，这种现象被称为服务雪崩效应。服务雪崩效应是一种因“服务提供者”的不可用导致“服务消费者”的不可用,并将不可用逐渐放大的过程。 ​    如果下图所示：A作为服务提供者，B为A的服务消费者">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2019/04/20/my-work0 (8)/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第8章-SpringCloud之一统天下学习目标： 1 熔断器Hystrix1.1 为什么要使用熔断器​    在微服务架构中通常会有多个服务层调用，基础服务的故障可能会导致级联故障，进而造成整个系统不可用的情况，这种现象被称为服务雪崩效应。服务雪崩效应是一种因“服务提供者”的不可用导致“服务消费者”的不可用,并将不可用逐渐放大的过程。 ​    如果下图所示：A作为服务提供者，B为A的服务消费者">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(8)/image/6-4.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(8)/image/6-5.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(8)/image/6-7.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(8)/image/6-6.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(8)/image/8_21.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(8)/image/8_25.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(8)/image/8_26.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(8)/image/8_23.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(8)/image/8_22.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(8)/image/8_24.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(8)/image/8_31.png">
+<meta property="og:updated_time" content="2019-03-08T14:23:17.920Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="第8章-SpringCloud之一统天下学习目标： 1 熔断器Hystrix1.1 为什么要使用熔断器​    在微服务架构中通常会有多个服务层调用，基础服务的故障可能会导致级联故障，进而造成整个系统不可用的情况，这种现象被称为服务雪崩效应。服务雪崩效应是一种因“服务提供者”的不可用导致“服务消费者”的不可用,并将不可用逐渐放大的过程。 ​    如果下图所示：A作为服务提供者，B为A的服务消费者">
+<meta name="twitter:image" content="http://yoursite.com/2019/04/20/my-work0%20(8)/image/6-4.jpg">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>Hexo</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: 
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/1.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Single Dog</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:123@123.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="#" title="GitHub"></a>
+                            
+                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">专注于前端</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Single Dog</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/1.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Single Dog</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:123@123.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="#" title="GitHub"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
+</nav>
+      <div class="body-wrap"><article id="post-my-work0 (8)" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/04/20/my-work0 (8)/" class="article-date">
+      <time datetime="2019-04-20T14:58:54.641Z" itemprop="datePublished">2019-04-20</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h1 id="第8章-SpringCloud之一统天下"><a href="#第8章-SpringCloud之一统天下" class="headerlink" title="第8章-SpringCloud之一统天下"></a>第8章-SpringCloud之一统天下</h1><p>学习目标：</p>
+<h1 id="1-熔断器Hystrix"><a href="#1-熔断器Hystrix" class="headerlink" title="1 熔断器Hystrix"></a>1 熔断器Hystrix</h1><h2 id="1-1-为什么要使用熔断器"><a href="#1-1-为什么要使用熔断器" class="headerlink" title="1.1 为什么要使用熔断器"></a>1.1 为什么要使用熔断器</h2><p>​    在微服务架构中通常会有多个服务层调用，基础服务的故障可能会导致级联故障，进而造成整个系统不可用的情况，这种现象被称为服务雪崩效应。服务雪崩效应是一种因“服务提供者”的不可用导致“服务消费者”的不可用,并将不可用逐渐放大的过程。</p>
+<p>​    如果下图所示：A作为服务提供者，B为A的服务消费者，C和D是B的服务消费者。A不可用引起了B的不可用，并将不可用像滚雪球一样放大到C和D时，雪崩效应就形成了。</p>
+<p> <img src="image/6-4.jpg" alt></p>
+<p>​    如何避免产生这种雪崩效应呢？我们可以使用Hystrix来实现熔断器。</p>
+<h2 id="1-2-什么是Hystrix"><a href="#1-2-什么是Hystrix" class="headerlink" title="1.2 什么是Hystrix"></a>1.2 什么是Hystrix</h2><p><strong>Hystrix</strong> [hɪst’rɪks]的中文含义是豪猪, 因其背上长满了刺,而拥有自我保护能力         <img src="image/6-5.jpg" alt></p>
+<p>​    Hystrix 能使你的系统在出现依赖服务失效的时候，通过隔离系统所依赖的服务，防止服务级联失败，同时提供失败回退机制，更优雅地应对失效，并使你的系统能更快地从异常中恢复。</p>
+<p>​    了解熔断器模式请看下图：</p>
+<p><img src="image/6-7.jpg" alt></p>
+<h2 id="1-3-快速体验"><a href="#1-3-快速体验" class="headerlink" title="1.3 快速体验"></a>1.3 快速体验</h2><p>Feign 本身支持Hystrix，不需要额外引入依赖。</p>
+<p>（1）修改tensquare_qa模块的application.yml ，开启hystrix</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">feign:</span></span><br><span class="line"><span class="attr">  hystrix:</span></span><br><span class="line"><span class="attr">    enabled:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>（2）在com.tensquare.qa.client包下创建impl包，包下创建熔断实现类，实现自接口LabelClient</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LabelClientImpl</span> <span class="keyword">implements</span> <span class="title">LabelClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Result <span class="title">findById</span><span class="params">(String id)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Result(<span class="keyword">false</span>, StatusCode.ERROR,<span class="string">"熔断器启动了"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（3）修改LabelClient的注解  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FeignClient</span>(value=<span class="string">"tensquare-base"</span>,fallback = LabelClientImpl.class)</span><br></pre></td></tr></table></figure>
+<p>（4）测试运行</p>
+<p>重新启动问答微服务，测试看熔断器是否运行。</p>
+<h1 id="2-微服务网关Zuul"><a href="#2-微服务网关Zuul" class="headerlink" title="2 微服务网关Zuul"></a>2 微服务网关Zuul</h1><h2 id="2-1-为什么需要微服务网关"><a href="#2-1-为什么需要微服务网关" class="headerlink" title="2.1 为什么需要微服务网关"></a>2.1 为什么需要微服务网关</h2><p>不同的微服务一般有不同的网络地址，而外部的客户端可能需要调用多个服务的接口才能完成一个业务需求。比如一个电影购票的收集APP,可能回调用电影分类微服务，用户微服务，支付微服务等。如果客户端直接和微服务进行通信，会存在一下问题：</p>
+<p># 客户端会多次请求不同微服务，增加客户端的复杂性</p>
+<p># 存在跨域请求，在一定场景下处理相对复杂</p>
+<p># 认证复杂，每一个服务都需要独立认证</p>
+<p># 难以重构，随着项目的迭代，可能需要重新划分微服务，如果客户端直接和微服务通信，那么重构会难以实施</p>
+<p># 某些微服务可能使用了其他协议，直接访问有一定困难</p>
+<p>上述问题，都可以借助微服务网关解决。微服务网关是介于客户端和服务器端之间的中间层，所有的外部请求都会先经过微服务网关。</p>
+<h2 id="2-2-什么是Zuul"><a href="#2-2-什么是Zuul" class="headerlink" title="2.2 什么是Zuul"></a>2.2 什么是Zuul</h2><p>​    Zuul是Netflix开源的微服务网关，他可以和Eureka,Ribbon,Hystrix等组件配合使用。Zuul组件的核心是一系列的过滤器，这些过滤器可以完成以下功能：</p>
+<p># 身份认证和安全: 识别每一个资源的验证要求，并拒绝那些不符的请求</p>
+<p>#审查与监控：</p>
+<p>## 动态路由：动态将请求路由到不同后端集群</p>
+<p># 压力测试：逐渐增加指向集群的流量，以了解性能</p>
+<p># 负载分配：为每一种负载类型分配对应容量，并弃用超出限定值的请求</p>
+<p># 静态响应处理：边缘位置进行响应，避免转发到内部集群</p>
+<p># 多区域弹性：跨域AWS Region进行请求路由，旨在实现ELB(ElasticLoad Balancing)使用多样化</p>
+<p>Spring Cloud对Zuul进行了整合和增强。</p>
+<p>使用Zuul后，架构图演变为以下形式</p>
+<p><img src="image/6-6.jpg" alt></p>
+<h2 id="2-3-Zuul路由转发"><a href="#2-3-Zuul路由转发" class="headerlink" title="2.3 Zuul路由转发"></a>2.3 Zuul路由转发</h2><h3 id="2-3-1-管理后台微服务网关"><a href="#2-3-1-管理后台微服务网关" class="headerlink" title="2.3.1 管理后台微服务网关"></a>2.3.1 管理后台微服务网关</h3><p>（1）创建子模块tensquare_manager，pom.xml引入eureka-client 和zuul的依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-zuul<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（2）创建application.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">9011</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  application:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">tensquare-manager</span> <span class="comment">#指定服务名</span></span><br><span class="line"><span class="attr">eureka:</span></span><br><span class="line"><span class="attr">  client:</span></span><br><span class="line"><span class="attr">    serviceUrl:</span> <span class="comment">#Eureka客户端与Eureka服务端进行交互的地址</span></span><br><span class="line"><span class="attr">      defaultZone:</span> <span class="attr">http://127.0.0.1:6868/eureka/</span></span><br><span class="line"><span class="attr">  instance:</span></span><br><span class="line"><span class="attr">    prefer-ip-address:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">zuul:</span></span><br><span class="line"><span class="attr">  routes:</span></span><br><span class="line"><span class="attr">    tensquare-gathering:</span> <span class="comment">#活动</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/gathering/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-gathering</span> <span class="comment">#指定Eureka注册中心中的服务id</span></span><br><span class="line"><span class="attr">    tensquare-article:</span> <span class="comment">#文章</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/article/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-article</span> <span class="comment">#指定Eureka注册中心中的服务id</span></span><br><span class="line"><span class="attr">    tensquare-base:</span> <span class="comment">#基础</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/base/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-base</span> <span class="comment">#指定Eureka注册中心中的服务id</span></span><br><span class="line"><span class="attr">    tensquare-friend:</span> <span class="comment">#交友</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/friend/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-friend</span> <span class="comment">#指定Eureka注册中心中的服务id </span></span><br><span class="line"><span class="attr">    tensquare-qa:</span> <span class="comment">#问答</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/qa/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-qa</span> <span class="comment">#指定Eureka注册中心中的服务id </span></span><br><span class="line"><span class="attr">    tensquare-recruit:</span> <span class="comment">#招聘</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/recruit/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-recruit</span> <span class="comment">#指定Eureka注册中心中的服务id          </span></span><br><span class="line"><span class="attr">    tensquare-spit:</span> <span class="comment">#吐槽</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/spit/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-spit</span> <span class="comment">#指定Eureka注册中心中的服务id      </span></span><br><span class="line"><span class="attr">    tensquare-user:</span> <span class="comment">#用户</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/user/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-user</span> <span class="comment">#指定Eureka注册中心中的服务id</span></span><br></pre></td></tr></table></figure>
+<p>（3）编写启动类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableZuulProxy</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Application</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(Application.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-3-2-网站前台的微服务网关"><a href="#2-3-2-网站前台的微服务网关" class="headerlink" title="2.3.2 网站前台的微服务网关"></a>2.3.2 网站前台的微服务网关</h3><p>（1）创建子模块tensquare_web，pom.xml引入依赖zuul</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-eureka-client<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-netflix-zuul<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（2）创建application.yml </p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">9012</span></span><br><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  application:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">tensquare-web</span> <span class="comment">#指定服务名</span></span><br><span class="line"><span class="attr">eureka:</span></span><br><span class="line"><span class="attr">  client:</span></span><br><span class="line"><span class="attr">    serviceUrl:</span> <span class="comment">#Eureka客户端与Eureka服务端进行交互的地址</span></span><br><span class="line"><span class="attr">      defaultZone:</span> <span class="attr">http://127.0.0.1:6868/eureka/</span></span><br><span class="line"><span class="attr">  instance:</span></span><br><span class="line"><span class="attr">    prefer-ip-address:</span> <span class="literal">true</span></span><br><span class="line"><span class="attr">zuul:</span></span><br><span class="line"><span class="attr">  routes:</span></span><br><span class="line"><span class="attr">    tensquare-gathering:</span> <span class="comment">#活动</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/gathering/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-gathering</span> <span class="comment">#指定Eureka注册中心中的服务id</span></span><br><span class="line"><span class="attr">    tensquare-article:</span> <span class="comment">#文章</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/article/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-article</span> <span class="comment">#指定Eureka注册中心中的服务id</span></span><br><span class="line"><span class="attr">    tensquare-base:</span> <span class="comment">#基础</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/base/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-base</span> <span class="comment">#指定Eureka注册中心中的服务id</span></span><br><span class="line"><span class="attr">    tensquare-friend:</span> <span class="comment">#交友</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/friend/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-friend</span> <span class="comment">#指定Eureka注册中心中的服务id</span></span><br><span class="line"><span class="attr">    tensquare-qa:</span> <span class="comment">#问答</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/qa/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-qa</span> <span class="comment">#指定Eureka注册中心中的服务id</span></span><br><span class="line"><span class="attr">    tensquare-recruit:</span> <span class="comment">#招聘</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/recruit/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-recruit</span> <span class="comment">#指定Eureka注册中心中的服务id</span></span><br><span class="line"><span class="attr">    tensquare-spit:</span> <span class="comment">#吐槽</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/spit/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-spit</span> <span class="comment">#指定Eureka注册中心中的服务id</span></span><br><span class="line"><span class="attr">    tensquare-user:</span> <span class="comment">#用户</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/user/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-user</span> <span class="comment">#指定Eureka注册中心中的服务id</span></span><br><span class="line"><span class="attr">    tensquare-search:</span> <span class="comment">#搜索</span></span><br><span class="line"><span class="attr">      path:</span> <span class="string">/search/**</span> <span class="comment">#配置请求URL的请求规则</span></span><br><span class="line"><span class="attr">      serviceId:</span> <span class="string">tensquare-search</span> <span class="comment">#指定Eureka注册中心中的服务id</span></span><br></pre></td></tr></table></figure>
+<p>（3）编写启动类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableZuulProxy</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebApplication</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(WebApplication.class);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="2-4-Zuul过滤器"><a href="#2-4-Zuul过滤器" class="headerlink" title="2.4 Zuul过滤器"></a>2.4 Zuul过滤器</h2><h3 id="2-4-1-Zuul过滤器快速体验"><a href="#2-4-1-Zuul过滤器快速体验" class="headerlink" title="2.4.1 Zuul过滤器快速体验"></a>2.4.1 Zuul过滤器快速体验</h3><p>我们现在在tensquare_web 创建一个简单的zuul过滤器</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WebFilter</span> <span class="keyword">extends</span> <span class="title">ZuulFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">filterType</span><span class="params">()</span> </span>&#123;</span><br><span class="line">         <span class="keyword">return</span> <span class="string">"pre"</span>;<span class="comment">// 前置过滤器</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">filterOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;<span class="comment">// 优先级为0，数字越大，优先级越低</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldFilter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;<span class="comment">// 是否执行该过滤器，此处为true，说明需要过滤</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> ZuulException </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"zuul过滤器..."</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>启动tensquare_web会发现过滤器已经执行</p>
+<p>filterType：返回一个字符串代表过滤器的类型，在zuul中定义了四种不同生命周期的过滤器类型，具体如下：</p>
+<ul>
+<li><code>pre</code>：    可以在请求被路由之前调用</li>
+<li><code>route</code>：在路由请求时候被调用</li>
+<li><code>post</code>：在route和error过滤器之后被调用</li>
+<li><code>error</code>：处理请求时发生错误时被调用</li>
+</ul>
+<p><code>filterOrder</code>：通过int值来定义过滤器的执行顺序</p>
+<p><code>shouldFilter</code>：返回一个boolean类型来判断该过滤器是否要执行，所以通过此函数可实现过滤器的开关。在上例中，我们直接返回true，所以该过滤器总是生效</p>
+<p><code>run</code>：过滤器的具体逻辑。</p>
+<h3 id="2-4-2-网站前台的token转发"><a href="#2-4-2-网站前台的token转发" class="headerlink" title="2.4.2 网站前台的token转发"></a>2.4.2 网站前台的token转发</h3><p>我们现在在过滤器中接收header，转发给微服务</p>
+<p>修改tensquare_web的过滤器。如果有token，直接转发。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> ZuulException </span>&#123;</span><br><span class="line">    System.out.println(<span class="string">"zuul过滤器..."</span>);</span><br><span class="line">    <span class="comment">//向header中添加鉴权令牌</span></span><br><span class="line">    RequestContext requestContext = RequestContext.getCurrentContext();</span><br><span class="line">    <span class="comment">//获取header</span></span><br><span class="line">    HttpServletRequest request = requestContext.getRequest();</span><br><span class="line">    String authorization = request.getHeader(<span class="string">"Authorization"</span>);</span><br><span class="line">    <span class="keyword">if</span>(authorization!=<span class="keyword">null</span>)&#123;</span><br><span class="line">        requestContext.addZuulRequestHeader(<span class="string">"Authorization"</span>,authorization);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="2-4-3-管理后台过滤器实现token校验"><a href="#2-4-3-管理后台过滤器实现token校验" class="headerlink" title="2.4.3 管理后台过滤器实现token校验"></a>2.4.3 管理后台过滤器实现token校验</h3><p>修改tensquare_manager的过滤器,  因为是管理后台使用，所以需要在过滤器中对token进行验证。</p>
+<p>（1）tensquare_manager引入tensquare_common依赖  ，因为需要用到其中的JWT工具类</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.tensquare<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>tensquare_common<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（2）修改tensquare_manager配置文件application.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">jwt:</span></span><br><span class="line"><span class="attr"> config:</span></span><br><span class="line"><span class="attr">    key:</span> <span class="string">itcast</span></span><br></pre></td></tr></table></figure>
+<p>（3）修改tensquare_manager的启动类,添加bean</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> JwtUtil <span class="title">jwtUtil</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> JwtUtil();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（4）tensquare_manager编写过滤器类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ManagerFilter</span> <span class="keyword">extends</span> <span class="title">ZuulFilter</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> JwtUtil jwtUtil;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">filterType</span><span class="params">()</span> </span>&#123;<span class="comment">//过滤器类型</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"pre"</span>;<span class="comment">//前置过滤器</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">filterOrder</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;<span class="comment">//优先级，数字越大，优先级越低</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">shouldFilter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;<span class="comment">//过滤器开关，true表示开启</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">run</span><span class="params">()</span> <span class="keyword">throws</span> ZuulException </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Zuul过滤器"</span>);</span><br><span class="line">        RequestContext requestContext=RequestContext.getCurrentContext();</span><br><span class="line">        HttpServletRequest request = requestContext.getRequest();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span>(request.getMethod().equals(<span class="string">"OPTIONS"</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        String url=request.getRequestURL().toString();</span><br><span class="line">        <span class="keyword">if</span>(url.indexOf(<span class="string">"/admin/login"</span>)&gt;<span class="number">0</span>)&#123;</span><br><span class="line">            System.out.println(<span class="string">"登陆页面"</span>+url);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        String authHeader =(String)request.getHeader(<span class="string">"Authorization"</span>);<span class="comment">//获取头信息</span></span><br><span class="line">        <span class="keyword">if</span>(authHeader!=<span class="keyword">null</span> &amp;&amp; authHeader.startsWith(<span class="string">"Bearer "</span>) )&#123;</span><br><span class="line">            String token = authHeader.substring(<span class="number">7</span>);</span><br><span class="line">            Claims claims = jwtUtil.parseJWT(token);</span><br><span class="line">            <span class="keyword">if</span>(claims!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                <span class="keyword">if</span>(<span class="string">"admin"</span>.equals(claims.get(<span class="string">"roles"</span>)))&#123;</span><br><span class="line">                    requestContext.addZuulRequestHeader(<span class="string">"Authorization"</span>,authHeader);</span><br><span class="line">                    System.out.println(<span class="string">"token 验证通过，添加了头信息"</span>+authHeader);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        requestContext.setSendZuulResponse(<span class="keyword">false</span>);<span class="comment">//终止运行</span></span><br><span class="line">        requestContext.setResponseStatusCode(<span class="number">401</span>);<span class="comment">//http状态码</span></span><br><span class="line">        requestContext.setResponseBody(<span class="string">"无权访问"</span>);</span><br><span class="line">        requestContext.getResponse().setContentType(<span class="string">"text/html;charset=UTF-8"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要注意，这里我们通过<code>ctx.setSendZuulResponse(false)</code>令zuul过滤该请求，不对其进行路由，然后通过<code>ctx.setResponseStatusCode(401)</code>设置了其返回的错误码</p>
+<h1 id="3-集中配置组件SpringCloudConfig"><a href="#3-集中配置组件SpringCloudConfig" class="headerlink" title="3 集中配置组件SpringCloudConfig"></a>3 集中配置组件SpringCloudConfig</h1><h2 id="3-1-Spring-Cloud-Config简介"><a href="#3-1-Spring-Cloud-Config简介" class="headerlink" title="3.1 Spring Cloud Config简介"></a>3.1 Spring Cloud Config简介</h2><p>在分布式系统中，由于服务数量巨多，为了方便服务配置文件统一管理，实时更新，所以需要分布式配置中心组件。在Spring Cloud中，有分布式配置中心组件spring cloud config ，它支持配置服务放在配置服务的内存中（即本地），也支持放在远程Git仓库中。在spring cloud config 组件中，分两个角色，一是config server，二是config client。</p>
+<p>Config Server是一个可横向扩展、集中式的配置服务器，它用于集中管理应用程序各个环境下的配置，默认使用Git存储配置文件内容，也可以使用SVN存储，或者是本地文件存储。</p>
+<p>Config Client是Config Server的客户端，用于操作存储在Config Server中的配置内容。微服务在启动时会请求Config Server获取配置文件的内容，请求到后再启动容器。</p>
+<p>详细内容看在线文档： <a href="https://springcloud.cc/spring-cloud-config.html" target="_blank" rel="noopener">https://springcloud.cc/spring-cloud-config.html</a></p>
+<h2 id="3-2-配置服务端"><a href="#3-2-配置服务端" class="headerlink" title="3.2 配置服务端"></a>3.2 配置服务端</h2><h3 id="3-2-1-将配置文件提交到码云"><a href="#3-2-1-将配置文件提交到码云" class="headerlink" title="3.2.1 将配置文件提交到码云"></a>3.2.1 将配置文件提交到码云</h3><p>使用GitHub时，国内的用户经常遇到的问题是访问速度太慢，有时候还会出现无法连接的情况。如果我们希望体验Git飞一般的速度，可以使用国内的Git托管服务——<a href="https://gitee.com/" target="_blank" rel="noopener">码云</a>（<a href="https://gitee.com/" target="_blank" rel="noopener">gitee.com</a>）。</p>
+<p>和GitHub相比，码云也提供免费的Git仓库。此外，还集成了代码质量检测、项目演示等功能。对于团队协作开发，码云还提供了项目管理、代码托管、文档管理的服务。</p>
+<p>步骤：</p>
+<p>（1）浏览器打开gitee.com，注册用户 ，注册后登陆码云管理控制台</p>
+<p><img src="image/8_21.png" alt></p>
+<p>（2）创建项目  tensquare-config  (点击右上角的加号 ，下拉菜单选择创建项目)</p>
+<p>（3）上传配置文件，将tensquare_base工程的application.yml改名为base-dev.yml后上传</p>
+<p><img src="image/8_25.png" alt></p>
+<p>可以通过拖拽的方式将文件上传上去</p>
+<p><img src="image/8_26.png" alt></p>
+<p>上传成功后列表可见</p>
+<p><img src="image/8_23.png" alt></p>
+<p>可以再次编辑此文件</p>
+<p><img src="image/8_22.png" alt></p>
+<p>文件命名规则：</p>
+<p>{application}-{profile}.yml或{application}-{profile}.properties</p>
+<p>application为应用名称 profile指的开发环境（用于区分开发环境，测试环境、生产环境等）</p>
+<p>（4）复制git地址 ,备用</p>
+<p><img src="image/8_24.png" alt></p>
+<p>地址为：<a href="https://gitee.com/chuanzhiliubei/tensquare-config.git" target="_blank" rel="noopener">https://gitee.com/chuanzhiliubei/tensquare-config.git</a></p>
+<h3 id="3-2-2-配置中心微服务"><a href="#3-2-2-配置中心微服务" class="headerlink" title="3.2.2 配置中心微服务"></a>3.2.2 配置中心微服务</h3><p>（1）创建工程模块 配置中心微服务  tensquare_config   ,pom.xml引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-config-server<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（2）创建启动类ConfigServerApplication</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableConfigServer</span> <span class="comment">//开启配置服务</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConfigServerApplication</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(ConfigServerApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（3）编写配置文件application.yml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  application:</span></span><br><span class="line"><span class="attr">    name:</span> <span class="string">tensquare-config</span></span><br><span class="line"><span class="attr">  cloud:</span></span><br><span class="line"><span class="attr">    config:</span></span><br><span class="line"><span class="attr">      server:</span></span><br><span class="line"><span class="attr">        git:</span></span><br><span class="line"><span class="attr">          uri:</span> <span class="attr">https://gitee.com/chuanzhiliubei/tensquare-config.git</span></span><br><span class="line"><span class="attr">server:</span></span><br><span class="line"><span class="attr">  port:</span> <span class="number">12000</span></span><br></pre></td></tr></table></figure>
+<p>（4）浏览器测试：<a href="http://localhost:12000/base-dev.yml" target="_blank" rel="noopener">http://localhost:12000/base-dev.yml</a> 可以看到配置内容</p>
+<h2 id="3-3-配置客户端"><a href="#3-3-配置客户端" class="headerlink" title="3.3 配置客户端"></a>3.3 配置客户端</h2><p>（1）在tensquare_base工程添加依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-config<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（2）添加bootstrap.yml ,删除application.yml </p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="attr">  cloud:</span></span><br><span class="line"><span class="attr">    config:</span></span><br><span class="line"><span class="attr">      name:</span> <span class="string">base</span></span><br><span class="line"><span class="attr">      profile:</span> <span class="string">dev</span></span><br><span class="line"><span class="attr">      label:</span> <span class="string">master</span></span><br><span class="line"><span class="attr">      uri:</span> <span class="attr">http://127.0.0.1:12000</span></span><br></pre></td></tr></table></figure>
+<p>（3）测试： 启动工程tensquare_eureka   tensquare_config  tensquare_base，看是否可以正常运行</p>
+<p><a href="http://localhost:9001/label" target="_blank" rel="noopener">http://localhost:9001/label</a>  </p>
+<h1 id="4-消息总线组件SpringCloudBus"><a href="#4-消息总线组件SpringCloudBus" class="headerlink" title="4 消息总线组件SpringCloudBus"></a>4 消息总线组件SpringCloudBus</h1><h2 id="4-1-SpringCloudBus简介"><a href="#4-1-SpringCloudBus简介" class="headerlink" title="4.1 SpringCloudBus简介"></a>4.1 SpringCloudBus简介</h2><p>​    如果我们更新码云中的配置文件，那客户端工程是否可以及时接受新的配置信息呢？我们现在来做有一个测试，修改一下码云中的配置文件中mysql的端口  ，然后测试<a href="http://localhost:9001/label" target="_blank" rel="noopener">http://localhost:9001/label</a>  数据依然可以查询出来，证明修改服务器中的配置并没有更新立刻到工程，只有重新启动程序才会读取配置。 那我们如果想在不重启微服务的情况下更新配置如何来实现呢?  我们使用SpringCloudBus来实现配置的自动更新。</p>
+<h2 id="4-2-代码实现"><a href="#4-2-代码实现" class="headerlink" title="4.2 代码实现"></a>4.2 代码实现</h2><h3 id="4-2-1-配置服务端"><a href="#4-2-1-配置服务端" class="headerlink" title="4.2.1 配置服务端"></a>4.2.1 配置服务端</h3><p>（1）修改tensquare_config工程的pom.xml，引用依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-bus<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-stream-binder-rabbit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（2）修改application.yml ，添加配置</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">  rabbitmq:</span></span><br><span class="line"><span class="attr">    host:</span> <span class="number">192.168</span><span class="number">.184</span><span class="number">.135</span></span><br><span class="line"><span class="attr">management:</span> <span class="comment">#暴露触发消息总线的地址</span></span><br><span class="line"><span class="attr">  endpoints:</span></span><br><span class="line"><span class="attr">    web:</span></span><br><span class="line"><span class="attr">      exposure:</span></span><br><span class="line"><span class="attr">        include:</span> <span class="string">bus-refresh</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-2-2-配置客户端"><a href="#4-2-2-配置客户端" class="headerlink" title="4.2.2 配置客户端"></a>4.2.2 配置客户端</h3><p>我们还是以基础模块为例，加入消息总线</p>
+<p>（1）修改tensquare_base工程 ，引入依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-bus<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-stream-binder-rabbit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（2）在码云的配置文件中配置rabbitMQ的地址：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">rabbitmq:</span></span><br><span class="line"><span class="attr">  host:</span> <span class="number">192.168</span><span class="number">.184</span><span class="number">.135</span></span><br></pre></td></tr></table></figure>
+<p>（2）启动tensquare_eureka  、tensquare_config和tensquare_base  看是否正常运行</p>
+<p>（3）修改码云上的配置文件 ，将数据库连接IP  改为127.0.0.1  ，在本地部署一份数据库。</p>
+<p>（4）postman测试    Url: <a href="http://127.0.0.1:12000/actuator/bus-refresh" target="_blank" rel="noopener">http://127.0.0.1:12000/actuator/bus-refresh</a>   Method: post  </p>
+<p>（5）再次观察输出的数据是否是读取了本地的mysql数据。</p>
+<h3 id="4-2-3-自定义配置的读取"><a href="#4-2-3-自定义配置的读取" class="headerlink" title="4.2.3 自定义配置的读取"></a>4.2.3 自定义配置的读取</h3><p>（1）修改码云上的配置文件，增加自定义配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sms:</span><br><span class="line">  ip: 127.0.0.1</span><br></pre></td></tr></table></figure>
+<p>（2）在tensquare_base工程中新建controller</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestController</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;sms.ip&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> String ip;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(value = <span class="string">"/ip"</span>, method = RequestMethod.GET)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">ip</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ip;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（3）运行测试看是否能够读取配置信息  ，OK.</p>
+<p>（4）修改码云上的配置文件中的自定义配置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sms:</span><br><span class="line">  ip: 192.168.184.134</span><br></pre></td></tr></table></figure>
+<p>（5）通过postman测试    Url: <a href="http://127.0.0.1:12000/actuator/bus-refresh" target="_blank" rel="noopener">http://127.0.0.1:12000/actuator/bus-refresh</a>   Method: post    </p>
+<p>测试后观察,发现并没有更新信息。</p>
+<p>这是因为我们的 controller少了一个注解@RefreshScope  此注解用于刷新配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RefreshScope</span></span><br><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestController</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;sms.ip&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> String ip;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@RequestMapping</span>(value = <span class="string">"/ip"</span>, method = RequestMethod.GET)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">ip</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> ip;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>添加后再次进行测试。</p>
+<h3 id="4-2-4-完成十次方工程的配置集中管理"><a href="#4-2-4-完成十次方工程的配置集中管理" class="headerlink" title="4.2.4 完成十次方工程的配置集中管理"></a>4.2.4 完成十次方工程的配置集中管理</h3><p>步骤：</p>
+<p>（1）将每一个工程的配置文件提取出来，重命名</p>
+<p><img src="image/8_31.png" alt></p>
+<p>（2）将这些文件上传到码云</p>
+<p>（3）修改每一个微服务工程，pom.xml中添加依赖</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-starter-config<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-bus<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.cloud<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-cloud-stream-binder-rabbit<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-actuator<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>（4）删除每一个微服务的application.yml</p>
+<p>（5）为每一个微服务添加bootstrap.yml  （参考tesquare_base工程）</p>
+<p>（6）修改码云上的配置文件添加rabbitmq地址</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rabbitmq:</span><br><span class="line">  host: 192.168.184.135</span><br></pre></td></tr></table></figure>
+<h1 id="面试问题总结"><a href="#面试问题总结" class="headerlink" title="面试问题总结"></a>面试问题总结</h1><h2 id="解释雪崩效应，为什么要使用熔断器"><a href="#解释雪崩效应，为什么要使用熔断器" class="headerlink" title="解释雪崩效应，为什么要使用熔断器"></a>解释雪崩效应，为什么要使用熔断器</h2><h2 id="解释为什么使用微服务网关"><a href="#解释为什么使用微服务网关" class="headerlink" title="解释为什么使用微服务网关"></a>解释为什么使用微服务网关</h2><p>（1）微服务工程统一入口，方便前端调用</p>
+<p>（2）集中处理权限问题</p>
+<h2 id="解释为什么使用集中配置管理"><a href="#解释为什么使用集中配置管理" class="headerlink" title="解释为什么使用集中配置管理"></a>解释为什么使用集中配置管理</h2><p>将配置文件放到云端，方便后期维护</p>
+<h2 id="解释为什么使用消息总线"><a href="#解释为什么使用消息总线" class="headerlink" title="解释为什么使用消息总线"></a>解释为什么使用消息总线</h2><p>我们可以在不重启微服务的情况下，更新配置文件，让其立刻生效</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2019/04/20/my-work0 (8)/"></a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Single Dog</a></p>
+        <p><span>发布时间:</span>2019-04-20, 22:58:54</p>
+        <p><span>最后更新:</span>2019-03-08, 22:23:17</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2019/04/20/my-work0 (8)/" title>http://yoursite.com/2019/04/20/my-work0 (8)/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/04/20/my-work0 (8)/　　作者: Single Dog" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+            <div id="article-nav-newer" class="article-nav-title">
+                <a href="/2019/04/20/my-work0 (9)/">
+                    
+                </a>
+            </div>
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2019/04/20/my-work0 (7)/">
+                    
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#第8章-SpringCloud之一统天下"><span class="toc-number">1.</span> <span class="toc-text">第8章-SpringCloud之一统天下</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-熔断器Hystrix"><span class="toc-number">2.</span> <span class="toc-text">1 熔断器Hystrix</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-为什么要使用熔断器"><span class="toc-number">2.1.</span> <span class="toc-text">1.1 为什么要使用熔断器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-什么是Hystrix"><span class="toc-number">2.2.</span> <span class="toc-text">1.2 什么是Hystrix</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-快速体验"><span class="toc-number">2.3.</span> <span class="toc-text">1.3 快速体验</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-微服务网关Zuul"><span class="toc-number">3.</span> <span class="toc-text">2 微服务网关Zuul</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-为什么需要微服务网关"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 为什么需要微服务网关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-什么是Zuul"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 什么是Zuul</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-Zuul路由转发"><span class="toc-number">3.3.</span> <span class="toc-text">2.3 Zuul路由转发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-1-管理后台微服务网关"><span class="toc-number">3.3.1.</span> <span class="toc-text">2.3.1 管理后台微服务网关</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-2-网站前台的微服务网关"><span class="toc-number">3.3.2.</span> <span class="toc-text">2.3.2 网站前台的微服务网关</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-4-Zuul过滤器"><span class="toc-number">3.4.</span> <span class="toc-text">2.4 Zuul过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-1-Zuul过滤器快速体验"><span class="toc-number">3.4.1.</span> <span class="toc-text">2.4.1 Zuul过滤器快速体验</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-2-网站前台的token转发"><span class="toc-number">3.4.2.</span> <span class="toc-text">2.4.2 网站前台的token转发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-3-管理后台过滤器实现token校验"><span class="toc-number">3.4.3.</span> <span class="toc-text">2.4.3 管理后台过滤器实现token校验</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-集中配置组件SpringCloudConfig"><span class="toc-number">4.</span> <span class="toc-text">3 集中配置组件SpringCloudConfig</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-Spring-Cloud-Config简介"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 Spring Cloud Config简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-配置服务端"><span class="toc-number">4.2.</span> <span class="toc-text">3.2 配置服务端</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-1-将配置文件提交到码云"><span class="toc-number">4.2.1.</span> <span class="toc-text">3.2.1 将配置文件提交到码云</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-2-配置中心微服务"><span class="toc-number">4.2.2.</span> <span class="toc-text">3.2.2 配置中心微服务</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-3-配置客户端"><span class="toc-number">4.3.</span> <span class="toc-text">3.3 配置客户端</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-消息总线组件SpringCloudBus"><span class="toc-number">5.</span> <span class="toc-text">4 消息总线组件SpringCloudBus</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-SpringCloudBus简介"><span class="toc-number">5.1.</span> <span class="toc-text">4.1 SpringCloudBus简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-代码实现"><span class="toc-number">5.2.</span> <span class="toc-text">4.2 代码实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-1-配置服务端"><span class="toc-number">5.2.1.</span> <span class="toc-text">4.2.1 配置服务端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-2-配置客户端"><span class="toc-number">5.2.2.</span> <span class="toc-text">4.2.2 配置客户端</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-3-自定义配置的读取"><span class="toc-number">5.2.3.</span> <span class="toc-text">4.2.3 自定义配置的读取</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-4-完成十次方工程的配置集中管理"><span class="toc-number">5.2.4.</span> <span class="toc-text">4.2.4 完成十次方工程的配置集中管理</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#面试问题总结"><span class="toc-number">6.</span> <span class="toc-text">面试问题总结</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#解释雪崩效应，为什么要使用熔断器"><span class="toc-number">6.1.</span> <span class="toc-text">解释雪崩效应，为什么要使用熔断器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解释为什么使用微服务网关"><span class="toc-number">6.2.</span> <span class="toc-text">解释为什么使用微服务网关</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解释为什么使用集中配置管理"><span class="toc-number">6.3.</span> <span class="toc-text">解释为什么使用集中配置管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#解释为什么使用消息总线"><span class="toc-number">6.4.</span> <span class="toc-text">解释为什么使用消息总线</span></a></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"　| Hexo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/2019/04/20/my-work0 (9)/" title="上一篇: ">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2019/04/20/my-work0 (7)/" title="下一篇: ">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (10)/">my-work0 (10)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (9)/">my-work0 (9)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (8)/">my-work0 (8)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (7)/">my-work0 (7)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (6)/">my-work0 (6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (5)/">my-work0 (5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (4)/">my-work0 (4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (3)/">my-work0 (3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (2)/">my-work0 (2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/hello-world/">hello-world</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2016-2019 Single Dog
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style="display:none">
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style="display:none">
+                        <span id="page-visit" title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>

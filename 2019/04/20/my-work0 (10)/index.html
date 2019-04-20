@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+
+    <!--[if lt IE 9]>
+        <style>body {display: none; background: none !important} </style>
+        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
+    <![endif]-->
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<meta name="author" content="Single Dog">
+
+
+
+<meta name="description" content="第10章-容器管理与容器监控学习目标：  能够说出Rancher软件的作用，能够在Rancher中部署微服务 能够说出influxDB的作用，能够创建数据库、用户、赋予权限 能够说出cAdvisor 的作用，能够创建容器与influxDB连接 能够说出Grafana 的作用，能够使用Grafana监控容器的内存数据，并配置警告  1 容器管理工具Rancher1.1 什么是Rancher​">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://yoursite.com/2019/04/20/my-work0 (10)/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="第10章-容器管理与容器监控学习目标：  能够说出Rancher软件的作用，能够在Rancher中部署微服务 能够说出influxDB的作用，能够创建数据库、用户、赋予权限 能够说出cAdvisor 的作用，能够创建容器与influxDB连接 能够说出Grafana 的作用，能够使用Grafana监控容器的内存数据，并配置警告  1 容器管理工具Rancher1.1 什么是Rancher​">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_31.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_32.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_33.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_34.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_41.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_42.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_43.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_44.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_46.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_47.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_48.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_50.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_52.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_51.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_53.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_22.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_63.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_23.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_24.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_21.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_54.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_57.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_58.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_67.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_01.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_68.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_05.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_06.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_07.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_08.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_09.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_10.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_11.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_12.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_71.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_41.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_42.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_43.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_44.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_45.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_46.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_47.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_48.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_49.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_51.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_52.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_53.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_54.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_55.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_56.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_57.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_58.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_59.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_60.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_61.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_62.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_63.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/10_64.png">
+<meta property="og:updated_time" content="2018-11-21T01:12:06.630Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="第10章-容器管理与容器监控学习目标：  能够说出Rancher软件的作用，能够在Rancher中部署微服务 能够说出influxDB的作用，能够创建数据库、用户、赋予权限 能够说出cAdvisor 的作用，能够创建容器与influxDB连接 能够说出Grafana 的作用，能够使用Grafana监控容器的内存数据，并配置警告  1 容器管理工具Rancher1.1 什么是Rancher​">
+<meta name="twitter:image" content="http://yoursite.com/2019/04/20/my-work0%20(10)/image/9_31.png">
+
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+
+
+
+    <link rel="shortcut icon" href="/favicon.png">
+
+
+
+    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
+
+
+
+    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
+
+
+
+    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
+    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
+
+
+<link rel="stylesheet" href="/css/style.css">
+
+
+
+<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+
+<title>Hexo</title>
+
+<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
+<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+
+<script>
+    var yiliaConfig = {
+        fancybox: true,
+        animate: true,
+        isHome: false,
+        isPost: true,
+        isArchive: false,
+        isTag: false,
+        isCategory: false,
+        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
+        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
+        search: 
+    }
+</script>
+
+
+    <script>
+        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
+    </script>
+
+
+
+    <script> yiliaConfig.rootUrl = "\/";</script>
+
+
+
+
+
+
+</head></html>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            <img src="/img/1.jpg" class="animated zoomIn">
+        </a>
+        <hgroup>
+          <h1 class="header-author"><a href="/">Single Dog</a></h1>
+        </hgroup>
+
+        
+
+        
+
+
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                        <div class="icon-wrap icon-me hide" data-idx="3">
+                            <div class="user"></div>
+                            <div class="shoulder"></div>
+                        </div>
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                        <li>关于我</li>
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">所有文章</a></li>
+                        
+                            <li><a href="/tags/">标签云</a></li>
+                        
+                            <li><a href="/about/">关于我</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" href="mailto:123@123.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" href="#" title="GitHub"></a>
+                            
+                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/">GitHub</a>
+                    
+                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+                
+                <section class="switch-part switch-part4">
+                
+                    <div id="js-aboutme">专注于前端</div>
+                </section>
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">Single Dog</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                <img src="/img/1.jpg" class="animated zoomIn">
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="回到主页">Single Dog</a></h1>
+            </hgroup>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">所有文章</a></li>
+                
+                    <li><a href="/tags/">标签云</a></li>
+                
+                    <li><a href="/about/">关于我</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fa Email" target="_blank" href="mailto:123@123.com" title="Email"></a>
+                            
+                                <a class="fa GitHub" target="_blank" href="#" title="GitHub"></a>
+                            
+                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
+                            
+                        </ul>
+            </nav>
+        </header>                
+    </div>
+    <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
+</nav>
+      <div class="body-wrap"><article id="post-my-work0 (10)" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2019/04/20/my-work0 (10)/" class="article-date">
+      <time datetime="2019-04-20T14:58:54.662Z" itemprop="datePublished">2019-04-20</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h1 id="第10章-容器管理与容器监控"><a href="#第10章-容器管理与容器监控" class="headerlink" title="第10章-容器管理与容器监控"></a>第10章-容器管理与容器监控</h1><p>学习目标：</p>
+<ul>
+<li>能够说出Rancher软件的作用，能够在Rancher中部署微服务</li>
+<li>能够说出influxDB的作用，能够创建数据库、用户、赋予权限</li>
+<li>能够说出cAdvisor 的作用，能够创建容器与influxDB连接</li>
+<li>能够说出Grafana 的作用，能够使用Grafana监控容器的内存数据，并配置警告</li>
+</ul>
+<h1 id="1-容器管理工具Rancher"><a href="#1-容器管理工具Rancher" class="headerlink" title="1 容器管理工具Rancher"></a>1 容器管理工具Rancher</h1><h2 id="1-1-什么是Rancher"><a href="#1-1-什么是Rancher" class="headerlink" title="1.1 什么是Rancher"></a>1.1 什么是Rancher</h2><p>​     Rancher是一个开源的企业级全栈化容器部署及管理平台。Rancher为容器提供一揽子基础架构服务：CNI兼容的网络服务、存储服务、主机管理、负载均衡、防护墙……Rancher让上述服务跨越公有云、私有云、虚拟机、物理机环境运行，真正实现一键式应用部署和管理。</p>
+<p>​      <a href="https://www.cnrancher.com/" target="_blank" rel="noopener">https://www.cnrancher.com/</a></p>
+<h2 id="1-2-Rancher安装"><a href="#1-2-Rancher安装" class="headerlink" title="1.2 Rancher安装"></a>1.2 Rancher安装</h2><p>（1）下载Rancher 镜像</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull rancher/server</span><br></pre></td></tr></table></figure>
+<p>（2）创建Rancher容器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -di --name=rancher --restart=always -p 9090:8080 rancher/server</span><br></pre></td></tr></table></figure>
+<p>restart为重启策略</p>
+<ul>
+<li>no，默认策略，在容器退出时不重启容器</li>
+<li>on-failure，在容器非正常退出时（退出状态非0），才会重启容器<ul>
+<li>on-failure:3，在容器非正常退出时重启容器，最多重启3次</li>
+</ul>
+</li>
+<li>always，在容器退出时总是重启容器</li>
+<li>unless-stopped，在容器退出时总是重启容器，但是不考虑在Docker守护进程启动时就已经停止了的容器</li>
+</ul>
+<p>（3）在浏览器输入地址： <a href="http://192.168.184.136:9090" target="_blank" rel="noopener">http://192.168.184.136:9090</a>  即可看到高端大气的欢迎页</p>
+<p><img src="image/9_31.png" alt></p>
+<p>点击Got It  进入主界面</p>
+<p><img src="image/9_32.png" alt></p>
+<p>（4）切换至中文界面</p>
+<p>点击右下角的English 在弹出菜单中选择中文</p>
+<p><img src="image/9_33.png" alt></p>
+<p>切换后我们就可以看到亲切的中文界面啦~  </p>
+<p><img src="image/9_34.png" alt></p>
+<h2 id="1-3-Rancher初始化"><a href="#1-3-Rancher初始化" class="headerlink" title="1.3 Rancher初始化"></a>1.3 Rancher初始化</h2><h3 id="1-3-1-添加环境"><a href="#1-3-1-添加环境" class="headerlink" title="1.3.1  添加环境"></a>1.3.1  添加环境</h3><p>Rancher 支持将资源分组归属到多个<strong>环境</strong>。 每个环境具有自己独立的基础架构资源及服务，并由一个或多个用户、团队或组织所管理。</p>
+<p>例如，您可以创建独立的“开发”、“测试”及“生产”环境以确保环境之间的安全隔离，将“开发”环境的访问权限赋予全部人员，但限制“生产”环境的访问权限给一个小的团队。</p>
+<p>（1）选择“Default –&gt;环境管理” 菜单</p>
+<p><img src="image/9_41.png" alt></p>
+<p>（2）填写名称，点击“创建”按钮</p>
+<p><img src="image/9_42.png" alt></p>
+<p>（3）按照上述步骤，添加十次方测试环境和生产环境</p>
+<p><img src="image/9_43.png" alt></p>
+<p>（4）你可以通过点击logo右侧的菜单在各种环境下切换</p>
+<p><img src="image/9_44.png" alt></p>
+<h3 id="1-3-2-添加镜像库"><a href="#1-3-2-添加镜像库" class="headerlink" title="1.3.2 添加镜像库"></a>1.3.2 添加镜像库</h3><p>基础架构==&gt;添加镜像库==&gt;Custom==&gt;私有仓库主机地址192.168.184.135</p>
+<h3 id="1-3-3-添加主机"><a href="#1-3-3-添加主机" class="headerlink" title="1.3.3 添加主机"></a>1.3.3 添加主机</h3><p>（1）选择基础架构–&gt;主机 菜单，点击添加主机</p>
+<p><img src="image/9_46.png" alt></p>
+<p>（2）拷贝脚本</p>
+<p><img src="image/9_47.png" alt></p>
+<p>（3）在服务器（虚拟机）上运行脚本</p>
+<p><img src="image/9_48.png" alt></p>
+<p>（4）点击关闭按钮后，会看到界面中显示此主机。我们可以很方便地管理主机的每个容器的开启和关闭</p>
+<p><img src="image/9_50.png" alt></p>
+<h3 id="1-3-4-添加应用"><a href="#1-3-4-添加应用" class="headerlink" title="1.3.4 添加应用"></a>1.3.4 添加应用</h3><p>点击应用–&gt;全部(或用户)  ，点击“添加应用”按钮</p>
+<p><img src="image/9_52.png" alt></p>
+<p>填写名称和描述</p>
+<p><img src="image/9_51.png" alt></p>
+<p>点击“创建”按钮，列表中增加了新增的应用</p>
+<p><img src="image/9_53.png" alt></p>
+<h2 id="1-4-应用部署"><a href="#1-4-应用部署" class="headerlink" title="1.4 应用部署"></a>1.4 应用部署</h2><h3 id="1-4-1-MySQL部署"><a href="#1-4-1-MySQL部署" class="headerlink" title="1.4.1 MySQL部署"></a>1.4.1 MySQL部署</h3><p>镜像：centos/mysql-57-centos7   增加数据库服务</p>
+<p><img src="image/10_22.png" alt></p>
+<p>注意：添加环境变量  MYSQL_ROOT_PASSWORD=123456 </p>
+<p><img src="image/9_63.png" alt></p>
+<p>点击创建按钮，完成创建    上述操作相当于以下docker命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -di --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 centos/mysql-57-centos7</span><br></pre></td></tr></table></figure>
+<p><img src="image/10_23.png" alt></p>
+<p>完成后服务列表中存在并且状态为激活    使用SQLyog测试链接，执行建表语句</p>
+<h3 id="1-4-2-RabbitMQ部署"><a href="#1-4-2-RabbitMQ部署" class="headerlink" title="1.4.2 RabbitMQ部署"></a>1.4.2 RabbitMQ部署</h3><p>镜像：rabbitmq:management     端口映射5671   5672  4369    15671  15672  25672</p>
+<p><img src="image/10_24.png" alt></p>
+<p>浏览器访问   <a href="http://192.168.184.136:15672/" target="_blank" rel="noopener">http://192.168.184.136:15672/</a></p>
+<h3 id="1-4-3-Redis部署-（学员实现）"><a href="#1-4-3-Redis部署-（学员实现）" class="headerlink" title="1.4.3 Redis部署  （学员实现）"></a>1.4.3 Redis部署  （学员实现）</h3><p>进入应用，点击添加服务    名称redis ，镜像redis ，端口映射6379 </p>
+<p><img src="image/10_21.png" alt></p>
+<p>创建后使用客户端测试链接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">redis-cli -h 192.168.184.136</span><br></pre></td></tr></table></figure>
+<p>测试成功</p>
+<h3 id="1-4-4-MongoDB部署（学员实现）"><a href="#1-4-4-MongoDB部署（学员实现）" class="headerlink" title="1.4.4 MongoDB部署（学员实现）"></a>1.4.4 MongoDB部署（学员实现）</h3><p>名称mongo  镜像mongo    端口映射27017 </p>
+<h3 id="1-4-5-ElasticSearch部署（学员实现）"><a href="#1-4-5-ElasticSearch部署（学员实现）" class="headerlink" title="1.4.5 ElasticSearch部署（学员实现）"></a>1.4.5 ElasticSearch部署（学员实现）</h3><p>名称elasticsearch   镜像elasticsearch:5.6.8  端口映射9300   9200</p>
+<p>添加后，浏览器测试： <a href="http://192.168.184.136:9200/" target="_blank" rel="noopener">http://192.168.184.136:9200/</a></p>
+<h2 id="1-5-微服务容器部署"><a href="#1-5-微服务容器部署" class="headerlink" title="1.5 微服务容器部署"></a>1.5 微服务容器部署</h2><h3 id="1-5-1-Eureka微服务容器化部署"><a href="#1-5-1-Eureka微服务容器化部署" class="headerlink" title="1.5.1 Eureka微服务容器化部署"></a>1.5.1 Eureka微服务容器化部署</h3><p>（1）在用户应用界面中点击“添加服务”  </p>
+<p><img src="image/9_54.png" alt></p>
+<p>（2）填写名称、描述、镜像和端口映射，点击创建按钮</p>
+<p>名称eureka  镜像  192.168.184.135:5000/tensquare_eureka:1.0-SNAPSHOT </p>
+<p><img src="image/9_57.png" alt></p>
+<p>（3）服务添加成功</p>
+<p><img src="image/9_58.png" alt></p>
+<p>（4）我们现在访问以下我们的系统</p>
+<p><a href="http://192.168.184.136:6868/" target="_blank" rel="noopener">http://192.168.184.136:6868/</a>  可以正常访问</p>
+<h3 id="1-5-2-配置中心微服务部署"><a href="#1-5-2-配置中心微服务部署" class="headerlink" title="1.5.2 配置中心微服务部署"></a>1.5.2 配置中心微服务部署</h3><p>创建容器</p>
+<p>添加服务config  镜像  192.168.184.135:5000/tensquare_config:1.0-SNAPSHOT  </p>
+<p>映射端口：12000</p>
+<p>测试 浏览器输入 <a href="http://192.168.184.135:12000/base-dev.yml" target="_blank" rel="noopener">http://192.168.184.135:12000/base-dev.yml</a>  可以查看到配置文件内容</p>
+<h3 id="1-5-3-基础微服务部署"><a href="#1-5-3-基础微服务部署" class="headerlink" title="1.5.3 基础微服务部署"></a>1.5.3 基础微服务部署</h3><p>（1）添加服务base-service   镜像tensquare_base:1.0-SNAPSHOT    端口映射9001</p>
+<p><img src="image/9_67.png" alt></p>
+<p>（2）测试微服务  浏览器打开网址  <a href="http://192.168.184.136:9001/label" target="_blank" rel="noopener">http://192.168.184.136:9001/label</a>   看是否可以看到标签列表</p>
+<h2 id="1-6-扩容与缩容"><a href="#1-6-扩容与缩容" class="headerlink" title="1.6 扩容与缩容"></a>1.6 扩容与缩容</h2><h3 id="1-6-1-扩容"><a href="#1-6-1-扩容" class="headerlink" title="1.6.1 扩容"></a>1.6.1 扩容</h3><p>（1）在Rancher将创建的base-service（基础信息微服务）删除</p>
+<p>（2）重新创建base-service ，不设置端口映射</p>
+<p><img src="image/10_01.png" alt></p>
+<p>（3）在选择菜单API  –&gt;WebHooks  ，点击“添加接收器”按钮</p>
+<p><img src="image/9_68.png" alt></p>
+<p>（4）填写名称等信息，选择要扩容的服务，点击创建按钮</p>
+<p><img src="image/10_05.png" alt></p>
+<p>（5）接收器列表中新增了一条记录  ，点击触发地址将地址复制到剪切板</p>
+<p><img src="image/10_06.png" alt></p>
+<p>（6）使用postman测试：</p>
+<p><img src="image/10_07.png" alt></p>
+<p>测试后，发现容器由原来的1个变为了3个</p>
+<p><img src="image/10_08.png" alt></p>
+<p>打开erueka，发现服务也有3个</p>
+<p><img src="image/10_09.png" alt></p>
+<h3 id="1-6-2-缩容"><a href="#1-6-2-缩容" class="headerlink" title="1.6.2 缩容"></a>1.6.2 缩容</h3><p>刚才我们实现了扩容，那么如何减少容器数量呢？我们来试试如何缩容</p>
+<p>（1）添加接收器  ,选择缩容，步长为1表示每次递减1个 ，点击创建按钮</p>
+<p><img src="image/10_10.png" alt></p>
+<p>（2）创建成功后，复制触发地址</p>
+<p><img src="image/10_11.png" alt></p>
+<p>（3）使用postman测试</p>
+<p><img src="image/10_12.png" alt></p>
+<h1 id="2-influxDB"><a href="#2-influxDB" class="headerlink" title="2 influxDB"></a>2 influxDB</h1><h2 id="2-1-什么是influxDB"><a href="#2-1-什么是influxDB" class="headerlink" title="2.1 什么是influxDB"></a>2.1 什么是influxDB</h2><p>​    influxDB是一个分布式时间序列数据库。cAdvisor仅仅显示实时信息，但是不存储监视数据。因此，我们需要提供时序数据库用于存储cAdvisor组件所提供的监控信息，以便显示除实时信息之外的时序数据。</p>
+<h2 id="2-2-influxDB安装"><a href="#2-2-influxDB安装" class="headerlink" title="2.2 influxDB安装"></a>2.2 influxDB安装</h2><p>（1）下载镜像</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull tutum/influxdb</span><br></pre></td></tr></table></figure>
+<p>（2）创建容器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker run -di \</span><br><span class="line">   -p 8083:8083 \</span><br><span class="line">   -p 8086:8086 \</span><br><span class="line">   --expose 8090 \</span><br><span class="line">   --expose 8099 \</span><br><span class="line">   --name influxsrv \</span><br><span class="line">   tutum/influxdb</span><br></pre></td></tr></table></figure>
+<p>端口概述：  8083端口:web访问端口     8086:数据写入端口</p>
+<p>打开浏览器   <a href="http://192.168.229.128:8083/" target="_blank" rel="noopener">http://192.168.184.135:8083/</a></p>
+<p><img src="image/10_71.png" alt></p>
+<h2 id="2-3-influxDB常用操作"><a href="#2-3-influxDB常用操作" class="headerlink" title="2.3 influxDB常用操作"></a>2.3 influxDB常用操作</h2><h3 id="2-3-1-创建数据库"><a href="#2-3-1-创建数据库" class="headerlink" title="2.3.1 创建数据库"></a>2.3.1 创建数据库</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE DATABASE &quot;cadvisor&quot;</span><br></pre></td></tr></table></figure>
+<p>回车创建数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHOW DATABASES</span><br></pre></td></tr></table></figure>
+<p>查看数据库</p>
+<h3 id="2-3-2-创建用户并授权"><a href="#2-3-2-创建用户并授权" class="headerlink" title="2.3.2 创建用户并授权"></a>2.3.2 创建用户并授权</h3><p>创建用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE USER &quot;cadvisor&quot; WITH PASSWORD &apos;cadvisor&apos; WITH ALL PRIVILEGES</span><br></pre></td></tr></table></figure>
+<p>查看用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHOW USRES</span><br></pre></td></tr></table></figure>
+<p>用户授权</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">grant all privileges on cadvisor to cadvisor</span><br><span class="line">grant WRITE on cadvisor to cadvisor</span><br><span class="line">grant READ on cadvisor to cadvisor</span><br></pre></td></tr></table></figure>
+<h3 id="2-3-3-查看采集的数据"><a href="#2-3-3-查看采集的数据" class="headerlink" title="2.3.3 查看采集的数据"></a>2.3.3 查看采集的数据</h3><p>切换到cadvisor数据库，使用以下命令查看采集的数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SHOW MEASUREMENTS</span><br></pre></td></tr></table></figure>
+<p>现在我们还没有数据，如果想采集系统的数据，我们需要使用<strong>Cadvisor</strong>软件来实现</p>
+<h1 id="3-cAdvisor"><a href="#3-cAdvisor" class="headerlink" title="3 cAdvisor"></a>3 cAdvisor</h1><h2 id="3-1-什么是cAdvisor"><a href="#3-1-什么是cAdvisor" class="headerlink" title="3.1 什么是cAdvisor"></a>3.1 什么是cAdvisor</h2><p>​    Google开源的用于监控基础设施应用的工具，它是一个强大的监控工具，不需要任何配置就可以通过运行在Docker主机上的容器来监控Docker容器，而且可以监控Docker主机。更多详细操作和配置选项可以查看Github上的cAdvisor项目文档。</p>
+<h2 id="3-2-cAdvisor安装"><a href="#3-2-cAdvisor安装" class="headerlink" title="3.2 cAdvisor安装"></a>3.2 cAdvisor安装</h2><p>（1）下载镜像</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull google/cadvisor</span><br></pre></td></tr></table></figure>
+<p>（2）创建容器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --volume=/:/rootfs:ro --volume=/var/run:/var/run:rw --volume=/sys:/sys:ro --volume=/var/lib/docker/:/var/lib/docker:ro --publish=8080:8080 --detach=true --link influxsrv:influxsrv --name=cadvisor google/cadvisor -storage_driver=influxdb -storage_driver_db=cadvisor -storage_driver_host=influxsrv:8086</span><br></pre></td></tr></table></figure>
+<p>WEB前端访问地址</p>
+<p><a href="http://192.168.184.135:8080/containers/" target="_blank" rel="noopener">http://192.168.184.135:8080/containers/</a></p>
+<p>性能指标含义参照如下地址</p>
+<p><a href="https://blog.csdn.net/ZHANG_H_A/article/details/53097084" target="_blank" rel="noopener">https://blog.csdn.net/ZHANG_H_A/article/details/53097084</a></p>
+<p>再次查看influxDB，发现已经有很多数据被采集进去了。</p>
+<h1 id="4-Grafana"><a href="#4-Grafana" class="headerlink" title="4 Grafana"></a>4 Grafana</h1><h2 id="4-1-什么是Grafana"><a href="#4-1-什么是Grafana" class="headerlink" title="4.1 什么是Grafana"></a>4.1 什么是Grafana</h2><p>​    Grafana是一个可视化面板（Dashboard），有着非常漂亮的图表和布局展示，功能齐全的度量仪表盘和图形编辑器。支持Graphite、zabbix、InfluxDB、Prometheus和OpenTSDB作为数据源。<br>Grafana主要特性：灵活丰富的图形化选项；可以混合多种风格；支持白天和夜间模式；多个数据源。</p>
+<h2 id="4-2-Grafana安装"><a href="#4-2-Grafana安装" class="headerlink" title="4.2 Grafana安装"></a>4.2 Grafana安装</h2><p>（1）下载镜像</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull grafana/grafana</span><br></pre></td></tr></table></figure>
+<p>（2）创建容器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d -p 3001:3000  -e INFLUXDB_HOST=influxsrv -e INFLUXDB_PORT=8086 -e INFLUXDB_NAME=cadvisor -e INFLUXDB_USER=cadvisor -e INFLUXDB_PASS=cadvisor --link influxsrv:influxsrv --name grafana grafana/grafana</span><br></pre></td></tr></table></figure>
+<p>（3）访问</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://192.168.184.135:3001</span><br></pre></td></tr></table></figure>
+<p>用户名密码均为admin</p>
+<p><img src="image/10_41.png" alt></p>
+<p>（4）登录后提示你修改密码</p>
+<p><img src="image/10_42.png" alt></p>
+<p>（5）之后进入主页面</p>
+<p><img src="image/10_43.png" alt></p>
+<h2 id="4-3-Grafana的使用"><a href="#4-3-Grafana的使用" class="headerlink" title="4.3 Grafana的使用"></a>4.3 Grafana的使用</h2><h3 id="4-3-1-添加数据源"><a href="#4-3-1-添加数据源" class="headerlink" title="4.3.1 添加数据源"></a>4.3.1 添加数据源</h3><p>（1）点击设置，DataSource </p>
+<p><img src="image/10_44.png" alt></p>
+<p>（2）点击添加data source</p>
+<p><img src="image/10_45.png" alt></p>
+<p>（3）为数据源起个名称，指定类型、地址、以及连接的数据库名、用户名和密码</p>
+<p><img src="image/10_46.png" alt></p>
+<p>点击保存。数据源建立成功</p>
+<p><img src="image/10_47.png" alt></p>
+<h3 id="4-3-2-添加仪表盘"><a href="#4-3-2-添加仪表盘" class="headerlink" title="4.3.2 添加仪表盘"></a>4.3.2 添加仪表盘</h3><p>（1）选择Dashboards –Manager  </p>
+<p><img src="image/10_48.png" alt></p>
+<p>（2）点击“添加”按钮</p>
+<p>（3）点击Graph  图标</p>
+<p><img src="image/10_49.png" alt></p>
+<p>（4）出现下面图表的界面 ，点击Panel Title  选择Edit (编辑)</p>
+<p><img src="image/10_51.png" alt></p>
+<p>（5）定义标题等基础信息</p>
+<p><img src="image/10_52.png" alt></p>
+<p>（6）设置查询的信息为内存，指定容器名称</p>
+<p><img src="image/10_53.png" alt></p>
+<p>（7）指定y轴的单位 为M</p>
+<p><img src="image/10_54.png" alt></p>
+<p>（8）保存</p>
+<p><img src="image/10_55.png" alt></p>
+<p>填写名称</p>
+<p><img src="image/10_56.png" alt></p>
+<h3 id="4-4-3-预警通知设置"><a href="#4-4-3-预警通知设置" class="headerlink" title="4.4.3 预警通知设置"></a>4.4.3 预警通知设置</h3><p>（1）选择菜单  alerting–&gt; Notification channels</p>
+<p><img src="image/10_57.png" alt></p>
+<p>（2）点击Add channel 按钮</p>
+<p><img src="image/10_58.png" alt></p>
+<p>（3）填写名称，选择类型为webhook  ,填写钩子地址</p>
+<p><img src="image/10_59.png" alt></p>
+<p>这个钩子地址是之前对base微服务扩容的地址</p>
+<p><img src="image/10_60.png" alt></p>
+<p>（4）点击SendTest  测试  观察基础微服务是否增加容器</p>
+<p>（5）点击save保存</p>
+<p>（6）按照同样的方法添加缩容地址</p>
+<h3 id="4-4-4-仪表盘预警设置"><a href="#4-4-4-仪表盘预警设置" class="headerlink" title="4.4.4 仪表盘预警设置"></a>4.4.4 仪表盘预警设置</h3><p>（1）再次打开刚刚编辑的仪表盘</p>
+<p><img src="image/10_61.png" alt></p>
+<p>（2）点击 Create Alert </p>
+<p><img src="image/10_62.png" alt></p>
+<p>设置预警线</p>
+<p>（3）选择通知</p>
+<p><img src="image/10_63.png" alt></p>
+<p><img src="image/10_64.png" alt></p>
+<p>保存更改</p>
+
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/2019/04/20/my-work0 (10)/"></a></p>
+        <p><span>文章作者:</span><a href="/" title="回到主页">Single Dog</a></p>
+        <p><span>发布时间:</span>2019-04-20, 22:58:54</p>
+        <p><span>最后更新:</span>2018-11-21, 09:12:06</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/2019/04/20/my-work0 (10)/" title>http://yoursite.com/2019/04/20/my-work0 (10)/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/2019/04/20/my-work0 (10)/　　作者: Single Dog" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+    <nav id="article-nav">
+        
+        
+            <div id="article-nav-older" class="article-nav-title">
+                <a href="/2019/04/20/my-work0 (9)/">
+                    
+                </a>
+            </div>
+        
+    </nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+        <strong class="toc-title">文章目录</strong>
+        
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#第10章-容器管理与容器监控"><span class="toc-number">1.</span> <span class="toc-text">第10章-容器管理与容器监控</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#1-容器管理工具Rancher"><span class="toc-number">2.</span> <span class="toc-text">1 容器管理工具Rancher</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-1-什么是Rancher"><span class="toc-number">2.1.</span> <span class="toc-text">1.1 什么是Rancher</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-2-Rancher安装"><span class="toc-number">2.2.</span> <span class="toc-text">1.2 Rancher安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-3-Rancher初始化"><span class="toc-number">2.3.</span> <span class="toc-text">1.3 Rancher初始化</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-1-添加环境"><span class="toc-number">2.3.1.</span> <span class="toc-text">1.3.1  添加环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-2-添加镜像库"><span class="toc-number">2.3.2.</span> <span class="toc-text">1.3.2 添加镜像库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-3-添加主机"><span class="toc-number">2.3.3.</span> <span class="toc-text">1.3.3 添加主机</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-4-添加应用"><span class="toc-number">2.3.4.</span> <span class="toc-text">1.3.4 添加应用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-4-应用部署"><span class="toc-number">2.4.</span> <span class="toc-text">1.4 应用部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-1-MySQL部署"><span class="toc-number">2.4.1.</span> <span class="toc-text">1.4.1 MySQL部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-2-RabbitMQ部署"><span class="toc-number">2.4.2.</span> <span class="toc-text">1.4.2 RabbitMQ部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-3-Redis部署-（学员实现）"><span class="toc-number">2.4.3.</span> <span class="toc-text">1.4.3 Redis部署  （学员实现）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-4-MongoDB部署（学员实现）"><span class="toc-number">2.4.4.</span> <span class="toc-text">1.4.4 MongoDB部署（学员实现）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-4-5-ElasticSearch部署（学员实现）"><span class="toc-number">2.4.5.</span> <span class="toc-text">1.4.5 ElasticSearch部署（学员实现）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-5-微服务容器部署"><span class="toc-number">2.5.</span> <span class="toc-text">1.5 微服务容器部署</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-1-Eureka微服务容器化部署"><span class="toc-number">2.5.1.</span> <span class="toc-text">1.5.1 Eureka微服务容器化部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-2-配置中心微服务部署"><span class="toc-number">2.5.2.</span> <span class="toc-text">1.5.2 配置中心微服务部署</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-5-3-基础微服务部署"><span class="toc-number">2.5.3.</span> <span class="toc-text">1.5.3 基础微服务部署</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1-6-扩容与缩容"><span class="toc-number">2.6.</span> <span class="toc-text">1.6 扩容与缩容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-1-扩容"><span class="toc-number">2.6.1.</span> <span class="toc-text">1.6.1 扩容</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-6-2-缩容"><span class="toc-number">2.6.2.</span> <span class="toc-text">1.6.2 缩容</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#2-influxDB"><span class="toc-number">3.</span> <span class="toc-text">2 influxDB</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#2-1-什么是influxDB"><span class="toc-number">3.1.</span> <span class="toc-text">2.1 什么是influxDB</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-2-influxDB安装"><span class="toc-number">3.2.</span> <span class="toc-text">2.2 influxDB安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-3-influxDB常用操作"><span class="toc-number">3.3.</span> <span class="toc-text">2.3 influxDB常用操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-1-创建数据库"><span class="toc-number">3.3.1.</span> <span class="toc-text">2.3.1 创建数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-2-创建用户并授权"><span class="toc-number">3.3.2.</span> <span class="toc-text">2.3.2 创建用户并授权</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-3-查看采集的数据"><span class="toc-number">3.3.3.</span> <span class="toc-text">2.3.3 查看采集的数据</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#3-cAdvisor"><span class="toc-number">4.</span> <span class="toc-text">3 cAdvisor</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#3-1-什么是cAdvisor"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 什么是cAdvisor</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-2-cAdvisor安装"><span class="toc-number">4.2.</span> <span class="toc-text">3.2 cAdvisor安装</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#4-Grafana"><span class="toc-number">5.</span> <span class="toc-text">4 Grafana</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-什么是Grafana"><span class="toc-number">5.1.</span> <span class="toc-text">4.1 什么是Grafana</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-2-Grafana安装"><span class="toc-number">5.2.</span> <span class="toc-text">4.2 Grafana安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-3-Grafana的使用"><span class="toc-number">5.3.</span> <span class="toc-text">4.3 Grafana的使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-1-添加数据源"><span class="toc-number">5.3.1.</span> <span class="toc-text">4.3.1 添加数据源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-2-添加仪表盘"><span class="toc-number">5.3.2.</span> <span class="toc-text">4.3.2 添加仪表盘</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-3-预警通知设置"><span class="toc-number">5.3.3.</span> <span class="toc-text">4.4.3 预警通知设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-4-4-仪表盘预警设置"><span class="toc-number">5.3.4.</span> <span class="toc-text">4.4.4 仪表盘预警设置</span></a></li></ol></li></ol></li></ol>
+        
+    </div>
+    <style>
+        .left-col .switch-btn,
+        .left-col .switch-area {
+            display: none;
+        }
+        .toc-level-3 i,
+        .toc-level-3 ol {
+            display: none !important;
+        }
+    </style>
+
+    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
+
+    <script>
+        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
+    </script>
+
+
+
+    
+<div class="share">
+    
+        <div class="bdsharebuttonbox">
+            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
+            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
+            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
+            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
+            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
+            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></a>
+        </div>
+        <script>
+            window._bd_share_config={
+                "common":{"bdSnsKey":{},"bdText":"　| Hexo　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
+        </script>
+    
+
+    
+</div>
+
+
+
+
+
+
+
+    
+
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+
+        
+            <a href="/2019/04/20/my-work0 (9)/" title="下一篇: ">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (10)/">my-work0 (10)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (9)/">my-work0 (9)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (8)/">my-work0 (8)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (7)/">my-work0 (7)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (6)/">my-work0 (6)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (5)/">my-work0 (5)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (4)/">my-work0 (4)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (3)/">my-work0 (3)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/my-work0 (2)/">my-work0 (2)</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/04/20/hello-world/">hello-world</a></li></ul>
+
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                <i class="fa fa-copyright"></i> 
+                2016-2019 Single Dog
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style="display:none">
+                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>| </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style="display:none">
+                        <span id="page-visit" title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+    </div>
+    
+<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var iPad = window.navigator.userAgent.indexOf('iPad');
+            if (iPad > -1 || $(".left-col").css("display") === "none") {
+                var bgColorList = ["#9db3f4", "#414141", "#e5a859", "#f5dfc6", "#c084a0", "#847e72", "#cd8390", "#996731"];
+                var bgColor = Math.ceil(Math.random() * (bgColorList.length - 1));
+                $("body").css({"background-color": bgColorList[bgColor], "background-size": "cover"});
+            }
+            else {
+                var backgroundnum = 5;
+                var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+                $("body").css({"background": backgroundimg, "background-attachment": "fixed", "background-size": "cover"});
+            }
+        })
+    </script>
+
+
+
+
+
+<div class="scroll" id="scroll">
+    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    // Open in New Window
+    
+        var oOpenInNew = {
+            
+            
+            
+            
+            
+            
+             archives: ".archive-article-title", 
+             miniArchives: "a.post-list-link", 
+            
+             friends: "#js-friends a", 
+             socail: ".social a" 
+        }
+        for (var x in oOpenInNew) {
+            $(oOpenInNew[x]).attr("target", "_blank");
+        }
+    
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+  </div>
+</body>
+</html>
